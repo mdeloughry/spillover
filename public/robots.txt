@@ -1,0 +1,9 @@
+# Spillover - Spotify Track Saver
+# https://spillover.app
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://spillover.app/sitemap.xml

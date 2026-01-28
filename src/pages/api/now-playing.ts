@@ -1,26 +1,39 @@
 import type { APIRoute } from 'astro';
-import { getTokenFromCookies } from '../../lib/auth';
 import { getCurrentlyPlaying, checkSavedTracks } from '../../lib/spotify';
+import {
+  getAuthenticatedToken,
+  checkRateLimit,
+  getClientIdentifier,
+  rateLimitResponse,
+  errorResponse,
+  log,
+} from '../../lib/api-utils';
 
 export const GET: APIRoute = async ({ request }) => {
-  const cookieHeader = request.headers.get('cookie');
-  const token = getTokenFromCookies(cookieHeader);
+  const startTime = Date.now();
+  const path = '/api/now-playing';
 
-  if (!token) {
-    return new Response(JSON.stringify({ error: 'Not authenticated' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  // Rate limiting (allow frequent polling)
+  const clientId = getClientIdentifier(request);
+  const rateLimit = checkRateLimit(`now-playing:${clientId}`, { windowMs: 60000, maxRequests: 120 });
+  if (!rateLimit.allowed) {
+    log({ level: 'warn', method: 'GET', path, clientId, error: 'Rate limited' });
+    return rateLimitResponse(rateLimit.resetIn);
   }
+
+  // Authentication
+  const authResult = await getAuthenticatedToken(request);
+  if (!authResult.success) {
+    return authResult.response;
+  }
+
+  const { token, headers } = authResult.data;
 
   try {
     const nowPlaying = await getCurrentlyPlaying(token);
 
     if (!nowPlaying || !nowPlaying.item || nowPlaying.currently_playing_type !== 'track') {
-      return new Response(JSON.stringify({ playing: false }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(JSON.stringify({ playing: false }), { status: 200, headers });
     }
 
     // Check if track is liked
@@ -34,17 +47,10 @@ export const GET: APIRoute = async ({ request }) => {
         ...nowPlaying.item,
         isLiked,
       },
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    }), { status: 200, headers });
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Failed to fetch now playing' }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch now playing';
+    log({ level: 'error', method: 'GET', path, status: 500, duration: Date.now() - startTime, error: errorMessage });
+    return errorResponse(errorMessage, 500);
   }
 };

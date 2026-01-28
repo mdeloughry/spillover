@@ -54,7 +54,7 @@ export default function TrackCard({ track, onLikeToggle, onAddToPlaylist, isPlay
           className={`absolute inset-0 flex items-center justify-center bg-black/60 rounded-xl transition-opacity ${
             isPlaying ? 'opacity-100' : 'opacity-0 hover:opacity-100'
           } ${!hasPreview ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-          title={!hasPreview ? 'No preview available' : isPlaying ? 'Pause preview' : 'Play preview'}
+          aria-label={!hasPreview ? `No preview available for ${track.name}` : isPlaying ? `Pause preview of ${track.name}` : `Play preview of ${track.name}`}
         >
           {isPlaying ? (
             <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -79,7 +79,7 @@ export default function TrackCard({ track, onLikeToggle, onAddToPlaylist, isPlay
           {track.name}
         </a>
         <p className="text-xs text-spotify-lightgray truncate">{artists}</p>
-        <p className="mt-1 text-[0.7rem] text-spotify-lightgray/70">
+        <p className="mt-1 text-xs text-spotify-lightgray/70 truncate">
           {track.album.name}
         </p>
       </div>
@@ -94,13 +94,13 @@ export default function TrackCard({ track, onLikeToggle, onAddToPlaylist, isPlay
         {/* Status pills */}
         <div className="flex flex-wrap justify-end gap-1">
           {hasPreview && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/10 px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.16em] text-emerald-200">
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/10 px-2 py-0.5 text-[0.6rem] sm:text-xs uppercase tracking-[0.16em] text-emerald-200">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
               Preview
             </span>
           )}
           {isLiked && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-white/15 px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.16em] text-spotify-lightgray">
+            <span className="inline-flex items-center gap-1 rounded-full border border-white/15 px-2 py-0.5 text-[0.6rem] sm:text-xs uppercase tracking-[0.16em] text-spotify-lightgray">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
               Liked
             </span>
@@ -113,12 +113,13 @@ export default function TrackCard({ track, onLikeToggle, onAddToPlaylist, isPlay
           <button
             onClick={handleLikeClick}
             disabled={isLikeLoading}
-            className={`p-2 rounded-full transition-all ${
+            className={`p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 rounded-full transition-all flex items-center justify-center ${
               isLiked
                 ? 'text-spotify-green hover:text-spotify-green/80 scale-100'
                 : 'text-spotify-lightgray hover:text-white opacity-70 group-hover:opacity-100'
             } disabled:opacity-50`}
-            title={isLiked ? 'Remove from Liked Songs' : 'Save to Liked Songs'}
+            aria-label={isLiked ? `Remove ${track.name} from Liked Songs` : `Save ${track.name} to Liked Songs`}
+            aria-pressed={isLiked}
           >
             {isLikeLoading ? (
               <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -142,8 +143,8 @@ export default function TrackCard({ track, onLikeToggle, onAddToPlaylist, isPlay
           {/* Add to Playlist Button */}
           <button
             onClick={() => onAddToPlaylist(track)}
-            className="p-2 rounded-full text-spotify-lightgray hover:text-white transition-colors"
-            title="Add to playlist"
+            className="p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 rounded-full text-spotify-lightgray hover:text-white transition-colors flex items-center justify-center"
+            aria-label={`Add ${track.name} to playlist`}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path

@@ -91,7 +91,7 @@ export default function NowPlayingBar({ track, isPlaying, onPlayPause, onStop, a
             <div className="flex items-center gap-4">
               <button
                 onClick={onPlayPause}
-                className="w-8 h-8 flex items-center justify-center bg-white rounded-full hover:scale-105 transition-transform"
+                className="w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center bg-white rounded-full hover:scale-105 transition-transform"
               >
                 {isPlaying ? (
                   <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 24 24">
@@ -105,7 +105,7 @@ export default function NowPlayingBar({ track, isPlaying, onPlayPause, onStop, a
               </button>
               <button
                 onClick={onStop}
-                className="p-1 text-spotify-lightgray hover:text-white transition-colors"
+                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-spotify-lightgray hover:text-white transition-colors"
                 title="Stop"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -115,7 +115,7 @@ export default function NowPlayingBar({ track, isPlaying, onPlayPause, onStop, a
             </div>
 
             {/* Progress Bar */}
-            <div className="flex items-center gap-2 w-full max-w-md">
+            <div className="hidden sm:flex items-center gap-2 w-full max-w-md">
               <span className="text-xs text-spotify-lightgray w-10 text-right">
                 {formatTime(progress)}
               </span>
@@ -136,11 +136,11 @@ export default function NowPlayingBar({ track, isPlaying, onPlayPause, onStop, a
             </div>
           </div>
 
-          {/* Volume */}
-          <div className="flex items-center gap-2 flex-1 justify-end">
+          {/* Volume - hidden on mobile */}
+          <div className="hidden sm:flex items-center gap-2 flex-1 justify-end">
             <button
               onClick={() => setVolume(volume === 0 ? 0.5 : 0)}
-              className="p-1 text-spotify-lightgray hover:text-white transition-colors"
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-spotify-lightgray hover:text-white transition-colors"
             >
               {volume === 0 ? (
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

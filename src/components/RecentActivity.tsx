@@ -23,7 +23,7 @@ function timeAgo(date: Date): string {
 
 export default function RecentActivity({ actions, onClear }: RecentActivityProps) {
   return (
-    <div className="w-72 flex-shrink-0">
+    <div className="w-full lg:w-72 flex-shrink-0">
       <div className="sticky top-4 bg-spotify-gray/20 rounded-lg border border-spotify-gray/30 overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-spotify-gray/30">
           <h3 className="font-semibold text-white text-sm">Recent Activity</h3>

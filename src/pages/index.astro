@@ -50,7 +50,7 @@ const initialUrl = Astro.url.searchParams.get("url") || "";
         <div class="max-w-5xl mx-auto px-4 py-12">
           <div class="mb-7 flex items-end justify-between gap-4">
             <div>
-              <p class="text-[0.7rem] uppercase tracking-[0.26em] text-emerald-300/80">
+              <p class="text-xs uppercase tracking-[0.26em] text-emerald-300/80">
                 Session
               </p>
               <h2 class="mt-2 text-[1.6rem] sm:text-[1.8rem] font-semibold tracking-tight">
@@ -77,10 +77,13 @@ const initialUrl = Astro.url.searchParams.get("url") || "";
         <div class="max-w-5xl mx-auto px-4 py-16">
           <div class="grid gap-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] items-center">
             <div>
-              <h2 class="mt-6 text-[2.45rem] sm:text-[2.9rem] font-semibold tracking-tight leading-[1.05]">
-                Catch songs from
+              <h2 class="mt-6 text-[2.4rem] sm:text-[2.7rem] font-bold tracking-tight leading-[1.00]">
+                Your music lives all-over.
                 <span class="block bg-gradient-to-r from-emerald-300 via-emerald-200 to-sky-300 bg-clip-text text-transparent">
-                  outside Spotify, and keep them.
+                  Your library shouldn't.
+                </span>
+                <span class="block bg-gradient-to-r from-emerald-300 via-emerald-200 to-sky-300 bg-clip-text text-transparent">
+                  Keep everything together.
                 </span>
               </h2>
               <p class="mt-4 text-[0.95rem] sm:text-[1.05rem] text-spotify-lightgray/95 max-w-xl leading-relaxed">
@@ -139,7 +142,7 @@ const initialUrl = Astro.url.searchParams.get("url") || "";
                         class="h-10 w-10 flex-shrink-0 rounded-lg object-cover ring-1 ring-white/10"
                       />
                       <div class="min-w-0">
-                        <p class="text-[0.7rem] uppercase tracking-[0.22em] text-spotify-lightgray">
+                        <p class="text-xs uppercase tracking-[0.22em] text-spotify-lightgray">
                           Listening elsewhere
                         </p>
                         <p class="mt-1 truncate text-sm font-medium">
@@ -160,7 +163,7 @@ const initialUrl = Astro.url.searchParams.get("url") || "";
                           <path d="M10 9v6l5-3-5-3z" />
                         </svg>
                       </div>
-                      <span class="text-[0.65rem] uppercase tracking-[0.16em] text-spotify-lightgray">
+                      <span class="text-xs uppercase tracking-[0.16em] text-spotify-lightgray">
                         Live now
                       </span>
                     </div>
@@ -193,7 +196,7 @@ const initialUrl = Astro.url.searchParams.get("url") || "";
                     </div>
 
                     <div class="min-w-0 flex-1">
-                      <p class="text-[0.7rem] uppercase tracking-[0.2em] text-spotify-lightgray">
+                      <p class="text-xs uppercase tracking-[0.2em] text-spotify-lightgray">
                         Found On Spotify
                       </p>
                       <p class="mt-1 truncate text-sm font-medium text-white">
@@ -206,7 +209,7 @@ const initialUrl = Astro.url.searchParams.get("url") || "";
 
                     <div class="ml-3 flex flex-col items-end gap-2">
                       <div class="flex flex-wrap justify-end gap-1">
-                        <span class="inline-flex items-center gap-1 rounded-full border border-white/15 px-2 py-0.5 text-[0.65rem] uppercase tracking-[0.16em] text-spotify-lightgray">
+                        <span class="inline-flex items-center gap-1 rounded-full border border-white/15 px-2 py-0.5 text-xs uppercase tracking-[0.16em] text-spotify-lightgray">
                           <span class="h-1.5 w-1.5 rounded-full bg-emerald-300" />
                           Liked
                         </span>

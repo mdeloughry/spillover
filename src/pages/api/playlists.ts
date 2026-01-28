@@ -1,46 +1,39 @@
 import type { APIRoute } from 'astro';
-import { getTokenFromCookies, getRefreshTokenFromCookies, refreshAccessToken } from '../../lib/auth';
 import { getPlaylists } from '../../lib/spotify';
+import {
+  getAuthenticatedToken,
+  checkRateLimit,
+  getClientIdentifier,
+  rateLimitResponse,
+  errorResponse,
+  log,
+} from '../../lib/api-utils';
 
 export const GET: APIRoute = async ({ request }) => {
-  let token = getTokenFromCookies(request.headers.get('cookie'));
-  const refreshToken = getRefreshTokenFromCookies(request.headers.get('cookie'));
+  const startTime = Date.now();
+  const path = '/api/playlists';
 
-  if (!token && !refreshToken) {
-    return new Response(JSON.stringify({ error: 'Not authenticated' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  // Rate limiting
+  const clientId = getClientIdentifier(request);
+  const rateLimit = checkRateLimit(`playlists:${clientId}`, { windowMs: 60000, maxRequests: 30 });
+  if (!rateLimit.allowed) {
+    log({ level: 'warn', method: 'GET', path, clientId, error: 'Rate limited' });
+    return rateLimitResponse(rateLimit.resetIn);
   }
 
-  const headers = new Headers();
-  headers.set('Content-Type', 'application/json');
-
-  if (!token && refreshToken) {
-    try {
-      const tokens = await refreshAccessToken(refreshToken);
-      token = tokens.access_token;
-      headers.append(
-        'Set-Cookie',
-        `spotify_access_token=${tokens.access_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${tokens.expires_in}`
-      );
-      if (tokens.refresh_token) {
-        headers.append(
-          'Set-Cookie',
-          `spotify_refresh_token=${tokens.refresh_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`
-        );
-      }
-    } catch {
-      return new Response(JSON.stringify({ error: 'Token refresh failed' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+  // Authentication
+  const authResult = await getAuthenticatedToken(request);
+  if (!authResult.success) {
+    log({ level: 'info', method: 'GET', path, status: 401, duration: Date.now() - startTime });
+    return authResult.response;
   }
+
+  const { token, headers } = authResult.data;
 
   try {
-    const playlistsResponse = await getPlaylists(token!);
+    const playlistsResponse = await getPlaylists(token);
 
+    log({ level: 'info', method: 'GET', path, status: 200, duration: Date.now() - startTime });
     return new Response(
       JSON.stringify({
         playlists: playlistsResponse.items,
@@ -49,10 +42,8 @@ export const GET: APIRoute = async ({ request }) => {
       { headers }
     );
   } catch (err) {
-    console.error('Get playlists error:', err);
-    return new Response(
-      JSON.stringify({ error: err instanceof Error ? err.message : 'Failed to get playlists' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    const errorMessage = err instanceof Error ? err.message : 'Failed to get playlists';
+    log({ level: 'error', method: 'GET', path, status: 500, duration: Date.now() - startTime, error: errorMessage });
+    return errorResponse(errorMessage, 500);
   }
 };

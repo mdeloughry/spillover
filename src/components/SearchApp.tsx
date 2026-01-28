@@ -355,9 +355,9 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
       </div>
 
       {/* Keyboard shortcuts hint */}
-      <div className="hidden sm:flex justify-center gap-4 text-[0.68rem] text-spotify-lightgray/85">
-        <span><kbd className="px-1.5 py-0.5 bg-spotify-gray/50 rounded">/</kbd> Search</span>
-        <span><kbd className="px-1.5 py-0.5 bg-spotify-gray/50 rounded">L</kbd> Like first</span>
+      <div className="hidden sm:flex justify-center gap-4 text-xs text-spotify-lightgray/85">
+        <span><kbd className="px-1.5 py-0.5 bg-spotify-gray/50 rounded text-[0.7rem]">/</kbd> Search</span>
+        <span><kbd className="px-1.5 py-0.5 bg-spotify-gray/50 rounded text-[0.7rem]">L</kbd> Like first</span>
       </div>
 
       {error && (

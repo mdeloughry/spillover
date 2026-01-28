@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type { SpotifyPlaylist, SpotifyTrack } from '../lib/spotify';
 
 interface PlaylistSelectorProps {
@@ -13,6 +13,56 @@ export default function PlaylistSelector({ track, onClose, onAdd }: PlaylistSele
   const [error, setError] = useState<string | null>(null);
   const [addingTo, setAddingTo] = useState<string | null>(null);
   const [addedTo, setAddedTo] = useState<Set<string>>(new Set());
+
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previouslyFocusedElement = useRef<HTMLElement | null>(null);
+
+  // Handle escape key and focus trap
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+      return;
+    }
+
+    // Focus trap
+    if (e.key === 'Tab' && dialogRef.current) {
+      const focusableElements = dialogRef.current.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey && document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement?.focus();
+      } else if (!e.shiftKey && document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement?.focus();
+      }
+    }
+  }, [onClose]);
+
+  useEffect(() => {
+    // Store previously focused element
+    previouslyFocusedElement.current = document.activeElement as HTMLElement;
+
+    // Focus the close button when modal opens
+    closeButtonRef.current?.focus();
+
+    // Add keyboard listener
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+      // Restore focus when modal closes
+      previouslyFocusedElement.current?.focus();
+    };
+  }, [handleKeyDown]);
 
   useEffect(() => {
     async function fetchPlaylists() {
@@ -46,19 +96,31 @@ export default function PlaylistSelector({ track, onClose, onAdd }: PlaylistSele
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-spotify-black border border-spotify-gray/30 rounded-lg w-full max-w-md max-h-[80vh] flex flex-col">
+    <div
+      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="playlist-dialog-title"
+      aria-describedby="playlist-dialog-description"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div
+        ref={dialogRef}
+        className="bg-spotify-black border border-spotify-gray/30 rounded-lg w-full max-w-md max-h-[80vh] flex flex-col"
+      >
         {/* Header */}
         <div className="p-4 border-b border-spotify-gray/30 flex items-center justify-between">
           <div>
-            <h2 className="font-bold text-white">Add to playlist</h2>
-            <p className="text-sm text-spotify-lightgray truncate">{track.name}</p>
+            <h2 id="playlist-dialog-title" className="font-bold text-white">Add to playlist</h2>
+            <p id="playlist-dialog-description" className="text-sm text-spotify-lightgray truncate">{track.name}</p>
           </div>
           <button
+            ref={closeButtonRef}
             onClick={onClose}
-            className="p-2 text-spotify-lightgray hover:text-white transition-colors"
+            className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-spotify-lightgray hover:text-white transition-colors"
+            aria-label="Close dialog"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -95,7 +157,9 @@ export default function PlaylistSelector({ track, onClose, onAdd }: PlaylistSele
                     key={playlist.id}
                     onClick={() => !isAdded && handleAdd(playlist.id)}
                     disabled={isAdding || isAdded}
-                    className={`w-full flex items-center gap-3 p-2 rounded-md transition-colors ${
+                    aria-label={isAdded ? `Already added to ${playlist.name}` : `Add to ${playlist.name}`}
+                    aria-busy={isAdding}
+                    className={`w-full flex items-center gap-3 p-3 min-h-[56px] rounded-md transition-colors ${
                       isAdded
                         ? 'bg-spotify-green/10 cursor-default'
                         : 'hover:bg-spotify-gray/20'

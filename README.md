@@ -1,24 +1,38 @@
 ## Spillover
 
-A small experimental project for liking tracks on Spotify from outside the Spotify client (e.g. via a browser extension UI).
+Save tracks to your Spotify library while listening on other platforms. Spillover lets you quickly search for and save tracks without switching apps.
 
-This project was originally created as an **experiment using Claude Code** to drive most of the implementation and refactoring work.
+Originally created as an **experiment using Claude Code** to drive implementation and refactoring.
+
+---
+
+## Features
+
+- **Quick Search** - Search Spotify's catalog with instant results
+- **One-Click Like** - Save tracks to your Liked Songs instantly
+- **Playlist Support** - Add tracks to any of your playlists
+- **URL Import** - Paste YouTube, SoundCloud, or Spotify URLs to find tracks
+- **Now Playing** - See what's currently playing on Spotify with recommendations
+- **Browser Extension** - Right-click any page to search for tracks
+- **Privacy First** - No data stored on servers, optional anonymous analytics
 
 ---
 
 ## Tech Stack
 
-- **Astro** for the main web app and API routes
+- **Astro 5** for the main web app and API routes (Node adapter for SSR)
 - **TypeScript** for application logic
+- **React** for interactive components
 - **Tailwind CSS** for styling
 - **Chrome-compatible extension** in the `extension/` directory
 - **Spotify Web API** for playback, user, and library operations
+- **PostHog** (optional) for anonymous analytics and error tracking
 
 ---
 
 ## Prerequisites
 
-- **Node.js** 20.x or later
+- **Node.js** 18.x or later
 - **npm** (comes with Node)
 - A **Spotify Developer** account and application:
   - Spotify Client ID
@@ -44,20 +58,20 @@ npm install
 
 3. **Configure environment**
 
-Create a `.env` file in the project root (alongside `astro.config.mjs`) with your secrets. Adjust names if you change anything in `src/lib/auth.ts` or `src/lib/spotify.ts`:
-
 ```bash
-cp .env.example .env # if you create one, otherwise create manually
+cp .env.example .env
 ```
 
-Then set at least:
+Edit `.env` with your Spotify credentials:
 
-```bash
+```env
 SPOTIFY_CLIENT_ID=your_client_id
 SPOTIFY_CLIENT_SECRET=your_client_secret
-SPOTIFY_REDIRECT_URI=http://localhost:4321/api/auth/callback
-SESSION_SECRET=some-long-random-string
-APP_BASE_URL=http://localhost:4321
+SPOTIFY_REDIRECT_URI=http://127.0.0.1:4321/api/auth/callback
+
+# Optional: PostHog Analytics (leave empty to disable)
+PUBLIC_POSTHOG_KEY=
+PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
 4. **Run the dev server**
@@ -133,8 +147,94 @@ High-level overview of the main directories:
   - `index.astro`, `extension.astro`, `privacy.astro`
 - `src/components/` – React/TSX components used by the Astro pages
 - `src/layouts/` – shared layouts
-- `src/lib/` – Spotify and auth helpers (`api-utils.ts`, `auth.ts`, `spotify.ts`)
+- `src/lib/` – Spotify and auth helpers (`api-utils.ts`, `auth.ts`, `spotify.ts`, `error-tracking.ts`)
 - `extension/` – browser extension source (background script, popup, manifest)
+- `public/` – static assets (favicon, robots.txt, sitemap.xml)
+
+---
+
+## API Endpoints
+
+All endpoints require authentication except `/api/health`.
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/health` | GET | Health check |
+| `/api/auth/login` | GET | Start OAuth flow |
+| `/api/auth/callback` | GET | OAuth callback |
+| `/api/auth/logout` | GET | Clear session |
+| `/api/me` | GET | Get current user |
+| `/api/search?q=` | GET | Search tracks |
+| `/api/like` | POST/DELETE | Like/unlike track |
+| `/api/playlists` | GET | Get user playlists |
+| `/api/playlist/add` | POST | Add track to playlist |
+| `/api/now-playing` | GET | Get currently playing |
+| `/api/suggestions?seeds=` | GET | Get recommendations |
+| `/api/import-url` | POST | Import from URL |
+
+### Rate Limits
+
+- Search: 60 requests/minute
+- Like/Playlist: 30 requests/minute
+- Now Playing: 120 requests/minute
+- Other endpoints: 30 requests/minute
+
+---
+
+## Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| `/` | Focus search |
+| `Space` | Play/pause preview |
+| `L` | Like first result |
+| `Esc` | Stop playback |
+
+---
+
+## Security
+
+- OAuth tokens stored in HTTP-only cookies
+- CSRF protection via state parameter
+- Security headers (X-Frame-Options, X-Content-Type-Options, etc.)
+- Input validation on all API endpoints
+- Rate limiting to prevent abuse
+
+---
+
+## Analytics (Optional)
+
+Spillover supports optional anonymous analytics via PostHog:
+
+- **Opt-in only** - Users consent via cookie banner
+- **No IP tracking** - Explicitly disabled
+- **No session recording** - Disabled by default
+- **Error tracking** - Captures unhandled errors for debugging
+
+To enable, set `PUBLIC_POSTHOG_KEY` in your environment.
+
+---
+
+## Production Deployment
+
+For production, update your redirect URI:
+
+```env
+SPOTIFY_REDIRECT_URI=https://your-domain.com/api/auth/callback
+```
+
+Run the production server:
+
+```bash
+npm run build
+node dist/server/entry.mjs
+```
+
+Or use PM2:
+
+```bash
+pm2 start dist/server/entry.mjs --name spillover
+```
 
 ---
 

@@ -1,0 +1,64 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Page Not Found - Spillover"
+  description="The page you're looking for doesn't exist. Head back to Spillover to search and save tracks to Spotify."
+  showBackLink={true}
+  backHref="/"
+  backLabel="Back to app"
+  noIndex={true}
+>
+  <div class="flex-1 flex items-center justify-center px-4 py-16">
+    <div class="text-center max-w-md">
+      <!-- 404 Icon -->
+      <div class="mb-8">
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-spotify-gray/20 mb-4">
+          <svg class="w-12 h-12 text-spotify-lightgray" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h1 class="text-7xl font-bold text-white mb-2">404</h1>
+        <p class="text-xl text-spotify-lightgray">Page not found</p>
+      </div>
+
+      <!-- Message -->
+      <p class="text-spotify-lightgray mb-8">
+        Looks like this track skipped. The page you're looking for doesn't exist or has been moved.
+      </p>
+
+      <!-- Actions -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="/"
+          class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-spotify-green text-black font-bold rounded-full hover:bg-spotify-green/90 hover:scale-105 transition-all"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          Go Home
+        </a>
+        <button
+          onclick="history.back()"
+          class="inline-flex items-center justify-center gap-2 px-6 py-3 border border-spotify-gray/30 text-white font-medium rounded-full hover:bg-spotify-gray/10 transition-colors"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Go Back
+        </button>
+      </div>
+
+      <!-- Helpful Links -->
+      <div class="mt-12 pt-8 border-t border-spotify-gray/20">
+        <p class="text-sm text-spotify-lightgray mb-4">Looking for something specific?</p>
+        <div class="flex flex-wrap gap-4 justify-center text-sm">
+          <a href="/" class="text-spotify-green hover:underline">Search Tracks</a>
+          <a href="/privacy" class="text-spotify-green hover:underline">Privacy Policy</a>
+          <a href="/extension" class="text-spotify-green hover:underline">Browser Extension</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

@@ -63,7 +63,7 @@ export default function SidebarRecommendations({ currentTrack, onTrackSelect }: 
   if (!currentTrack) return null;
 
   return (
-    <div className="w-72 flex-shrink-0">
+    <div className="w-full lg:w-72 flex-shrink-0">
       <div className="sticky top-4 bg-spotify-gray/20 rounded-lg border border-spotify-gray/30 overflow-hidden">
         <div className="flex items-center gap-2 px-4 py-3 border-b border-spotify-gray/30">
           <svg className="w-4 h-4 text-spotify-green" fill="currentColor" viewBox="0 0 24 24">
@@ -107,7 +107,7 @@ export default function SidebarRecommendations({ currentTrack, onTrackSelect }: 
                 <div className="flex items-center gap-1 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleLike(track)}
-                    className={`p-1 rounded-full transition-colors ${
+                    className={`p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full transition-colors ${
                       track.isLiked ? 'text-spotify-green opacity-100' : 'text-spotify-lightgray hover:text-white'
                     }`}
                     title={track.isLiked ? 'Remove from Liked Songs' : 'Add to Liked Songs'}
@@ -129,7 +129,7 @@ export default function SidebarRecommendations({ currentTrack, onTrackSelect }: 
                   {onTrackSelect && (
                     <button
                       onClick={() => onTrackSelect(track)}
-                      className="p-1 rounded-full text-spotify-lightgray hover:text-white transition-colors"
+                      className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full text-spotify-lightgray hover:text-white transition-colors"
                       title="Add to Playlist"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

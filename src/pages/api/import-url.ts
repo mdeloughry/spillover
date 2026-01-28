@@ -1,13 +1,27 @@
 import type { APIRoute } from 'astro';
-import { getTokenFromCookies, getRefreshTokenFromCookies, refreshAccessToken } from '../../lib/auth';
 import { searchTracks, checkSavedTracks, getTrackById, parseTrackUrl } from '../../lib/spotify';
+import {
+  getAuthenticatedToken,
+  checkRateLimit,
+  getClientIdentifier,
+  validateUrl,
+  rateLimitResponse,
+  errorResponse,
+  log,
+} from '../../lib/api-utils';
 
 // Fetch YouTube video title using oEmbed (no API key needed)
 async function getYouTubeTitle(videoId: string): Promise<string | null> {
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
     const response = await fetch(
-      `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`
+      `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
+      { signal: controller.signal }
     );
+    clearTimeout(timeoutId);
+
     if (!response.ok) return null;
     const data = await response.json();
     // Clean up common YouTube title patterns
@@ -23,78 +37,58 @@ async function getYouTubeTitle(videoId: string): Promise<string | null> {
 }
 
 export const POST: APIRoute = async ({ request }) => {
-  let token = getTokenFromCookies(request.headers.get('cookie'));
-  const refreshToken = getRefreshTokenFromCookies(request.headers.get('cookie'));
+  const startTime = Date.now();
+  const path = '/api/import-url';
 
-  if (!token && !refreshToken) {
-    return new Response(JSON.stringify({ error: 'Not authenticated' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  // Rate limiting
+  const clientId = getClientIdentifier(request);
+  const rateLimit = checkRateLimit(`import-url:${clientId}`, { windowMs: 60000, maxRequests: 30 });
+  if (!rateLimit.allowed) {
+    log({ level: 'warn', method: 'POST', path, clientId, error: 'Rate limited' });
+    return rateLimitResponse(rateLimit.resetIn);
   }
 
-  const headers = new Headers();
-  headers.set('Content-Type', 'application/json');
-
-  if (!token && refreshToken) {
-    try {
-      const tokens = await refreshAccessToken(refreshToken);
-      token = tokens.access_token;
-      headers.append(
-        'Set-Cookie',
-        `spotify_access_token=${tokens.access_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${tokens.expires_in}`
-      );
-      if (tokens.refresh_token) {
-        headers.append(
-          'Set-Cookie',
-          `spotify_refresh_token=${tokens.refresh_token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}`
-        );
-      }
-    } catch {
-      return new Response(JSON.stringify({ error: 'Token refresh failed' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+  // Authentication
+  const authResult = await getAuthenticatedToken(request);
+  if (!authResult.success) {
+    log({ level: 'info', method: 'POST', path, status: 401, duration: Date.now() - startTime });
+    return authResult.response;
   }
+
+  const { token, headers } = authResult.data;
 
   try {
     const body = await request.json();
     const { url } = body;
 
-    if (!url) {
-      return new Response(JSON.stringify({ error: 'Missing URL' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    // Validation
+    const urlValidation = validateUrl(url);
+    if (!urlValidation.valid) {
+      log({ level: 'info', method: 'POST', path, status: 400, error: urlValidation.error });
+      return errorResponse(urlValidation.error!, 400);
     }
 
     const parsed = parseTrackUrl(url);
     if (!parsed) {
-      return new Response(JSON.stringify({ error: 'Unsupported URL format' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      log({ level: 'info', method: 'POST', path, status: 400, error: 'Unsupported URL format' });
+      return errorResponse('Unsupported URL format. Supported: YouTube, Spotify, SoundCloud', 400);
     }
 
     let searchQuery: string;
-    let directTrack = null;
 
     if (parsed.platform === 'youtube') {
       // Get YouTube video title
       const title = await getYouTubeTitle(parsed.query);
       if (!title) {
-        return new Response(JSON.stringify({ error: 'Could not fetch video info' }), {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        });
+        return errorResponse('Could not fetch video info', 400);
       }
       searchQuery = title;
     } else if (parsed.platform === 'spotify') {
       // Direct Spotify track ID - fetch it directly
       try {
-        directTrack = await getTrackById(parsed.query, token!);
-        const [isLiked] = await checkSavedTracks([directTrack.id], token!);
+        const directTrack = await getTrackById(parsed.query, token);
+        const [isLiked] = await checkSavedTracks([directTrack.id], token);
+        log({ level: 'info', method: 'POST', path, status: 200, duration: Date.now() - startTime });
         return new Response(
           JSON.stringify({
             tracks: [{ ...directTrack, isLiked }],
@@ -104,29 +98,23 @@ export const POST: APIRoute = async ({ request }) => {
           { headers }
         );
       } catch {
-        return new Response(JSON.stringify({ error: 'Could not fetch Spotify track' }), {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        });
+        return errorResponse('Could not fetch Spotify track', 400);
       }
     } else if (parsed.platform === 'soundcloud') {
       searchQuery = parsed.query;
     } else {
-      return new Response(JSON.stringify({ error: 'Unsupported platform' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return errorResponse('Unsupported platform', 400);
     }
 
     // Search Spotify with the extracted query
-    const searchResults = await searchTracks(searchQuery, token!, 10);
+    const searchResults = await searchTracks(searchQuery, token, 10);
 
     // Check which tracks are already liked
     const trackIds = searchResults.tracks.items.map((track) => track.id);
     let likedStatus: boolean[] = [];
 
     if (trackIds.length > 0) {
-      likedStatus = await checkSavedTracks(trackIds, token!);
+      likedStatus = await checkSavedTracks(trackIds, token);
     }
 
     const tracksWithLiked = searchResults.tracks.items.map((track, index) => ({
@@ -134,6 +122,7 @@ export const POST: APIRoute = async ({ request }) => {
       isLiked: likedStatus[index] || false,
     }));
 
+    log({ level: 'info', method: 'POST', path, status: 200, duration: Date.now() - startTime });
     return new Response(
       JSON.stringify({
         tracks: tracksWithLiked,
@@ -143,10 +132,8 @@ export const POST: APIRoute = async ({ request }) => {
       { headers }
     );
   } catch (err) {
-    console.error('URL import error:', err);
-    return new Response(
-      JSON.stringify({ error: err instanceof Error ? err.message : 'Failed to import from URL' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    const errorMessage = err instanceof Error ? err.message : 'Failed to import from URL';
+    log({ level: 'error', method: 'POST', path, status: 500, duration: Date.now() - startTime, error: errorMessage });
+    return errorResponse(errorMessage, 500);
   }
 };

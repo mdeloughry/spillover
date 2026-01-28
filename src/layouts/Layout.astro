@@ -6,22 +6,31 @@ import SiteFooter from "../components/SiteFooter.astro";
 
 interface Props {
   title: string;
+  description?: string;
+  ogImage?: string;
   showAuthHeader?: boolean;
   isAuthenticated?: boolean;
   showBackLink?: boolean;
   backHref?: string;
   backLabel?: string;
+  noIndex?: boolean;
 }
 
 const {
   title,
+  description = "Catch songs from outside Spotify, and keep them. Save tracks to your Liked Songs and playlists from YouTube, SoundCloud, and anywhere else.",
+  ogImage = "/og-image.png",
   showAuthHeader = false,
   isAuthenticated = false,
   showBackLink = false,
   backHref = "/",
   backLabel = "Back to app",
+  noIndex = false,
 } = Astro.props;
-const url = Astro.url.href;
+
+const canonicalUrl = new URL(Astro.url.pathname, "https://spillover.app").href;
+const ogImageUrl = new URL(ogImage, "https://spillover.app").href;
+const siteName = "Spillover";
 ---
 
 <!doctype html>
@@ -29,27 +38,55 @@ const url = Astro.url.href;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Spillover - Quickly save tracks to your Spotify library while listening on other platforms"
-    />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta property="og:title" content={title} />
-    <meta
-      property="og:description"
-      content="Spillover - Quickly save tracks to your Spotify library while listening on other platforms"
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/favicon.svg" />
-    <meta property="og:url" content={url} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta
-      name="twitter:description"
-      content="Spillover - Quickly save tracks to your Spotify library while listening on other platforms"
-    />
-    <meta name="twitter:image" content="/favicon.svg" />
+
+    <!-- Primary Meta Tags -->
     <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="author" content="Spillover" />
+    <meta name="keywords" content="spotify, music, save tracks, liked songs, playlists, youtube to spotify, soundcloud to spotify, music library" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- Robots -->
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Spillover - Save tracks from anywhere to Spotify" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content="Spillover - Save tracks from anywhere to Spotify" />
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#22c55e" />
+    <meta name="msapplication-TileColor" content="#22c55e" />
+
+    <!-- Additional SEO -->
+    <meta name="application-name" content={siteName} />
+    <meta name="apple-mobile-web-app-title" content={siteName} />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
+
     <Analytics />
   </head>
   <body class="min-h-screen text-white antialiased">
