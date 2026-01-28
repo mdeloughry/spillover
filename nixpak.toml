@@ -3,6 +3,9 @@ name = "spotify-external-like"
 version = "0.0.1"
 description = "Spotify external like – Astro web app and browser extension"
 
+[install]
+apt_packages = ["zip"]
+
 # This is a starter Nixpak configuration intended for customisation.
 # It assumes a Node.js / npm build that produces static assets into `dist/`.
 
