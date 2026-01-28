@@ -39,9 +39,9 @@ export default function CookieBanner() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 animate-slide-up">
-      <div className="max-w-2xl mx-auto bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-2xl shadow-[0_0_40px_rgba(139,92,246,0.3)] p-[2px]">
-        <div className="bg-[#1a1625] rounded-2xl p-5 sm:p-6">
+    <div className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 pt-2 animate-slide-up">
+      <div className="w-full max-w-md sm:max-w-xl md:max-w-2xl mx-auto bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-2xl shadow-[0_0_40px_rgba(139,92,246,0.3)] p-[2px]">
+        <div className="bg-[#1a1625] rounded-2xl p-4 sm:p-5 md:p-6">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">

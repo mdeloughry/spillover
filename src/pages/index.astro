@@ -76,8 +76,8 @@ const initialUrl = Astro.url.searchParams.get("url") || "";
       ) : (
         <div class="max-w-5xl mx-auto px-4 py-16">
           <div class="grid gap-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] items-center">
-            <div>
-              <h2 class="mt-6 text-[2.4rem] sm:text-[2.7rem] font-bold tracking-tight leading-[1.00]">
+            <div class="max-w-full">
+              <h2 class="mt-6 text-[1.9rem] sm:text-[2.3rem] md:text-[2.6rem] font-bold tracking-tight leading-snug break-words">
                 Your music lives all-over.
                 <span class="block bg-gradient-to-r from-emerald-300 via-emerald-200 to-sky-300 bg-clip-text text-transparent">
                   Your library shouldn't.
@@ -86,7 +86,7 @@ const initialUrl = Astro.url.searchParams.get("url") || "";
                   Keep everything together.
                 </span>
               </h2>
-              <p class="mt-4 text-[0.95rem] sm:text-[1.05rem] text-spotify-lightgray/95 max-w-xl leading-relaxed">
+              <p class="mt-4 text-[0.95rem] sm:text-[1.05rem] text-spotify-lightgray/95 max-w-xl leading-relaxed break-words">
                 You discover tracks on YouTube, radio, mixes and random links.
                 Spillover is the quiet little bridge that makes sure they end up
                 in your Spotify library.
