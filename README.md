@@ -93,22 +93,34 @@ npm run preview
 
 ## Browser Extension
 
-The extension lives under the `extension/` directory. The build process also produces an `extension.zip` under `public/` and `dist/client/` that can be loaded into compatible browsers.
+The extension lives under the `extension/` directory. You can package it as a zip archive for distribution or loading into your browser.
+
+### Building `extension.zip`
+
+To build a fresh `extension.zip` from the `extension/` directory:
+
+```bash
+npm run build:extension-zip
+```
+
+This will:
+
+- Create (or replace) `public/extension.zip` containing the contents of `extension/`.
+- Allow Astro’s build step to copy that zip into `dist/client/extension.zip` when you run `npm run build`.
 
 ### Loading into Chrome (or Chromium-based browsers)
 
-1. Run a build so that the latest assets exist:
+1. (Optional but recommended) Build a fresh zip:
 
 ```bash
-npm run build
+npm run build:extension-zip
 ```
 
 2. Open `chrome://extensions` in your browser.
 3. Enable **Developer mode**.
-4. Click **Load unpacked**.
-5. Select the `extension/` directory from this repository.
-
-Alternatively, you can unzip `public/extension.zip` and load that folder.
+4. Either:
+   - Click **Load unpacked** and select the `extension/` directory, **or**
+   - Click **Load unpacked**, unzip `public/extension.zip`, and select the unzipped folder.
 
 ---
 
