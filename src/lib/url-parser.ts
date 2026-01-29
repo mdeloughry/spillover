@@ -39,13 +39,26 @@ class YouTubeParser implements PlatformParser {
     const hostname = url.hostname.toLowerCase();
     // youtu.be/VIDEO_ID
     if (hostname === 'youtu.be') {
-      const videoId = url.pathname.slice(1);
+      const videoId = url.pathname.slice(1).split('?')[0];
       return videoId || null;
     }
 
-    // youtube.com/watch?v=VIDEO_ID
-    const videoId = url.searchParams.get('v');
-    return videoId || null;
+    // Prefer standard watch URLs with ?v=VIDEO_ID
+    const queryVideoId = url.searchParams.get('v');
+    if (queryVideoId) {
+      return queryVideoId;
+    }
+
+    // Handle path-based formats: /embed/VIDEO_ID, /v/VIDEO_ID, /shorts/VIDEO_ID
+    const segments = url.pathname.split('/').filter(Boolean);
+    if (segments.length >= 2) {
+      const [first, second] = segments;
+      if ((first === 'embed' || first === 'shorts' || first === 'v') && second) {
+        return second.split('?')[0];
+      }
+    }
+
+    return null;
   }
 }
 
@@ -76,8 +89,8 @@ class SpotifyUrlParser implements PlatformParser {
   }
 
   parse(url: URL): string | null {
-    // open.spotify.com/track/TRACK_ID
-    const match = url.pathname.match(/track\/([a-zA-Z0-9]+)/);
+    // open.spotify.com/track/TRACK_ID (Spotify IDs are exactly 22 alphanumeric chars)
+    const match = url.pathname.match(/track\/([a-zA-Z0-9]{22})/);
     return match ? match[1] : null;
   }
 }
