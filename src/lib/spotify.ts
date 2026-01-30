@@ -109,6 +109,28 @@ export async function saveTrack(trackId: string, token: string): Promise<void> {
   });
 }
 
+/**
+ * Save multiple tracks to Liked Songs (max 50 at a time)
+ * @param trackIds - Array of track IDs to save
+ * @param token - The access token
+ */
+export async function saveTracks(trackIds: string[], token: string): Promise<void> {
+  // Spotify API allows max 50 IDs per request
+  const chunks: string[][] = [];
+  for (let i = 0; i < trackIds.length; i += 50) {
+    chunks.push(trackIds.slice(i, i + 50));
+  }
+
+  await Promise.all(
+    chunks.map(chunk =>
+      spotifyFetch<void>('/me/tracks', token, {
+        method: 'PUT',
+        body: JSON.stringify({ ids: chunk }),
+      })
+    )
+  );
+}
+
 export async function removeTrack(trackId: string, token: string): Promise<void> {
   await spotifyFetch<void>('/me/tracks', token, {
     method: 'DELETE',

@@ -310,6 +310,28 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
     announce(`Now playing ${track.name}`);
   }, []);
 
+  const handleLikeAll = useCallback(async (trackIds: string[]): Promise<void> => {
+    const response = await fetch('/api/like/bulk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ trackIds }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || 'Failed to like tracks');
+    }
+
+    // Update local state to mark all tracks as liked
+    setTracks((prev) =>
+      prev.map((track) =>
+        trackIds.includes(track.id) ? { ...track, isLiked: true } : track
+      )
+    );
+
+    announce(`Liked ${trackIds.length} tracks`);
+  }, []);
+
 // Use keyboard shortcuts hook (DRY principle - replaces manual keydown handler)
   useKeyboardShortcuts([
     shortcutPresets.focusSearch(() => searchInputRef.current?.focus()),
@@ -523,6 +545,7 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
                   hasActiveSession={hasActiveSession}
                   onAddToQueue={handleAddToQueue}
                   onPlayNow={handlePlayNow}
+                  onLikeAll={handleLikeAll}
                 />
               )}
 
