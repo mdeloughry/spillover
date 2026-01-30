@@ -1,4 +1,4 @@
-import { getTrackById, getRecommendations, getArtistTopTracks, checkSavedTracks } from '../../lib/spotify';
+import { getTrackById, getArtistTopTracks, getRelatedArtists, checkSavedTracks } from '../../lib/spotify';
 import { withApiHandler, errorResponse } from '../../lib/api-utils';
 import { RATE_LIMIT, API_PATHS, VALIDATION, UI } from '../../lib/constants';
 import type { SpotifyTrack } from '../../lib/spotify';
@@ -41,26 +41,33 @@ export const GET = withApiHandler(
 
     let suggestedTracks: SpotifyTrack[] = [];
 
-    // Try Spotify's recommendations API first (max 5 seeds total)
-    try {
-      const recommendations = await getRecommendations(
-        {
-          seedTracks: trackIds.slice(0, 2), // 2 seed tracks
-          seedArtists: artistIds.slice(0, 2), // 2 seed artists (4 total, under limit)
-          limit: UI.MAX_SUGGESTIONS_API,
-        },
-        token
-      );
-      suggestedTracks = recommendations.tracks || [];
-    } catch (err) {
-      console.error('Recommendations API failed, falling back to artist top tracks:', err);
-    }
-
-    // Fallback: if recommendations failed or returned empty, use artist top tracks
-    if (suggestedTracks.length === 0 && artistIds.length > 0) {
+    // Note: Spotify deprecated /recommendations API on Nov 27, 2024
+    // Using artist top tracks and related artists instead
+    if (artistIds.length > 0) {
       try {
+        // Get top tracks from the primary artist
         const topTracks = await getArtistTopTracks(artistIds[0], token);
         suggestedTracks = topTracks.tracks || [];
+
+        // If we have room for more suggestions, get top tracks from related artists
+        if (suggestedTracks.length < UI.MAX_SUGGESTIONS_API) {
+          try {
+            const relatedArtists = await getRelatedArtists(artistIds[0], token);
+            if (relatedArtists.artists.length > 0) {
+              // Get top tracks from first related artist
+              const relatedTopTracks = await getArtistTopTracks(
+                relatedArtists.artists[0].id,
+                token
+              );
+              suggestedTracks = [
+                ...suggestedTracks,
+                ...(relatedTopTracks.tracks || []),
+              ];
+            }
+          } catch {
+            // Silently fail related artists lookup
+          }
+        }
       } catch {
         // Silently fail
       }
