@@ -10,6 +10,7 @@ const SCOPES = [
   'playlist-modify-public',
   'playlist-modify-private',
   'user-read-playback-state',
+  'user-modify-playback-state',
   'user-read-currently-playing',
 ].join(' ');
 
