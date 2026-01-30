@@ -2,7 +2,6 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import SearchBar from './SearchBar';
 import TrackList from './TrackList';
 import PlaylistSelector from './PlaylistSelector';
-import NowPlayingBar from './NowPlayingBar';
 import RecentActivity from './RecentActivity';
 import SpotifyNowPlaying from './SpotifyNowPlaying';
 import SidebarRecommendations from './SidebarRecommendations';
@@ -10,7 +9,7 @@ import type { SpotifyTrack } from '../lib/spotify';
 import type { TrackWithLiked } from '../lib/api-client';
 import { parseTrackUrl } from '../lib/url-parser';
 import { parsePlaylistUrl, isTextTrackList } from '../lib/playlist-parser';
-import { useSearchHistory, useAudioPlayer, useKeyboardShortcuts, shortcutPresets } from '../hooks';
+import { useSearchHistory, useKeyboardShortcuts, shortcutPresets } from '../hooks';
 import { UI } from '../lib/constants';
 
 const PLATFORM_NAMES: Record<string, string> = {
@@ -92,16 +91,8 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
     setTimeout(() => setAnnouncement(message), 100);
   };
 
-  // Use custom hooks for search history and audio player (DRY principle)
+  // Use custom hooks for search history (DRY principle)
   const { history: searchHistory, addToHistory, clearHistory: clearSearchHistory } = useSearchHistory();
-  const {
-    playingTrackId,
-    playingTrack,
-    isPlaying,
-    toggle: toggleAudio,
-    stop: stopAudio,
-    audioRef,
-  } = useAudioPlayer();
 
   const handleLikeToggle = useCallback(async (trackId: string, shouldLike: boolean) => {
     const method = shouldLike ? 'POST' : 'DELETE';
@@ -139,9 +130,6 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
   }, []);
 
   const handleSearch = useCallback(async (query: string) => {
-    // Stop any playing audio when searching
-    stopAudio();
-
     setShowHistory(false);
     setIsLoading(true);
     setError(null);
@@ -248,7 +236,7 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [stopAudio, addToHistory]);
+  }, [addToHistory]);
 
   // Handle initial query from URL params (e.g., from browser extension)
   const initialQueryProcessed = useRef(false);
@@ -341,17 +329,7 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
       if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
         target.blur();
       }
-      stopAudio();
       setShowHistory(false);
-    }),
-    shortcutPresets.playPause(() => {
-      if (playingTrack && audioRef.current) {
-        if (isPlaying) {
-          audioRef.current.pause();
-        } else {
-          audioRef.current.play();
-        }
-      }
     }),
     shortcutPresets.like(() => {
       if (tracks.length > 0 && !tracks[0].isLiked) {
@@ -364,16 +342,6 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
       }
     }),
   ]);
-
-  const handlePlayPause = useCallback(() => {
-    if (!audioRef.current) return;
-
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play();
-    }
-  }, [isPlaying, audioRef]);
 
   const handleAddToPlaylist = useCallback(async (playlistId: string, trackUri: string, playlistName?: string) => {
     const response = await fetch('/api/playlist/add', {
@@ -540,8 +508,6 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
                   tracks={tracks}
                   onLikeToggle={handleLikeToggle}
                   onAddToPlaylist={setSelectedTrack}
-                  playingTrackId={playingTrackId}
-                  onPlayToggle={toggleAudio}
                   hasActiveSession={hasActiveSession}
                   onAddToQueue={handleAddToQueue}
                   onPlayNow={handlePlayNow}
@@ -591,15 +557,6 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
           onAdd={handleAddToPlaylist}
         />
       )}
-
-      {/* Now Playing Bar */}
-      <NowPlayingBar
-        track={playingTrack}
-        isPlaying={isPlaying}
-        onPlayPause={handlePlayPause}
-        onStop={stopAudio}
-        audioRef={audioRef}
-      />
     </div>
   );
 }

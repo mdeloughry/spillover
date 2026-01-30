@@ -10,10 +10,6 @@ interface TrackListProps {
   onLikeToggle: (trackId: string, isLiked: boolean) => Promise<void>;
   /** Callback to open playlist selector */
   onAddToPlaylist: (track: SpotifyTrack) => void;
-  /** ID of currently playing track preview */
-  playingTrackId: string | null;
-  /** Callback to toggle audio preview */
-  onPlayToggle: (track: SpotifyTrack) => void;
   /** Whether there's an active Spotify playback session */
   hasActiveSession?: boolean;
   /** Callback to add track to Spotify queue */
@@ -28,8 +24,6 @@ export default function TrackList({
   tracks,
   onLikeToggle,
   onAddToPlaylist,
-  playingTrackId,
-  onPlayToggle,
   hasActiveSession,
   onAddToQueue,
   onPlayNow,
@@ -149,8 +143,6 @@ export default function TrackList({
                 track={track}
                 onLikeToggle={onLikeToggle}
                 onAddToPlaylist={onAddToPlaylist}
-                isPlaying={playingTrackId === track.id}
-                onPlayToggle={onPlayToggle}
                 hasActiveSession={hasActiveSession}
                 onAddToQueue={onAddToQueue}
                 onPlayNow={onPlayNow}

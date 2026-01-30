@@ -12,10 +12,6 @@ interface TrackCardProps {
   onLikeToggle: (trackId: string, isLiked: boolean) => Promise<void>;
   /** Callback to open playlist selector */
   onAddToPlaylist: (track: SpotifyTrack) => void;
-  /** Whether this track's preview is currently playing */
-  isPlaying: boolean;
-  /** Callback to toggle audio preview playback */
-  onPlayToggle: (track: SpotifyTrack) => void;
   /** Whether there's an active Spotify playback session */
   hasActiveSession?: boolean;
   /** Callback to add track to Spotify queue */
@@ -28,8 +24,6 @@ export default function TrackCard({
   track,
   onLikeToggle,
   onAddToPlaylist,
-  isPlaying,
-  onPlayToggle,
   hasActiveSession = false,
   onAddToQueue,
   onPlayNow,
@@ -43,13 +37,6 @@ export default function TrackCard({
 
   const albumImage = getAlbumImageUrl(track.album, 'medium');
   const artists = formatArtists(track.artists);
-  const hasPreview = !!track.preview_url;
-
-  const getPlayButtonLabel = (): string => {
-    if (!hasPreview) return `No preview available for ${track.name}`;
-    if (isPlaying) return `Pause preview of ${track.name}`;
-    return `Play preview of ${track.name}`;
-  };
 
   const handleShareClick = async (): Promise<void> => {
     const result = await copyTrackUrl(track.external_urls?.spotify);
@@ -108,8 +95,8 @@ export default function TrackCard({
   return (
     <div className="group relative w-full max-w-full overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] shadow-[0_18px_60px_rgba(0,0,0,0.7)] hover:border-emerald-400/40 hover:bg-white/[0.04] transition-all">
       <div className="flex items-center gap-4 px-4 py-3 w-full min-w-0">
-        {/* Album Art with Play Button */}
-        <div className="flex-shrink-0 relative">
+        {/* Album Art */}
+        <div className="flex-shrink-0">
           {albumImage ? (
             <img
               src={albumImage}
@@ -123,24 +110,6 @@ export default function TrackCard({
               </svg>
             </div>
           )}
-          {/* Play/Pause overlay */}
-          <button
-            onClick={() => onPlayToggle(track)}
-            disabled={!hasPreview}
-            className={`absolute inset-0 flex items-center justify-center bg-black/60 rounded-xl transition-opacity ${isPlaying ? 'opacity-100' : 'opacity-0 hover:opacity-100'
-              } ${!hasPreview ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-            aria-label={getPlayButtonLabel()}
-          >
-            {isPlaying ? (
-              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-              </svg>
-            ) : (
-              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            )}
-          </button>
         </div>
 
         {/* Track Info */}
@@ -167,20 +136,12 @@ export default function TrackCard({
           </span>
 
           {/* Status pills */}
-          <div className="flex flex-wrap justify-end gap-1">
-            {hasPreview && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/10 px-2 py-0.5 text-[0.6rem] sm:text-xs uppercase tracking-[0.16em] text-emerald-200">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" aria-hidden="true" />
-                Preview
-              </span>
-            )}
-            {isLiked && (
-              <span className="inline-flex items-center gap-1 rounded-full border border-white/15 px-2 py-0.5 text-[0.6rem] sm:text-xs uppercase tracking-[0.16em] text-spotify-lightgray">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" aria-hidden="true" />
-                Liked
-              </span>
-            )}
-          </div>
+          {isLiked && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-white/15 px-2 py-0.5 text-[0.6rem] sm:text-xs uppercase tracking-[0.16em] text-spotify-lightgray">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" aria-hidden="true" />
+              Liked
+            </span>
+          )}
 
           {/* Actions */}
           <div className="flex items-center gap-2">

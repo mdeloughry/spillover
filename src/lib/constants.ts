@@ -68,9 +68,6 @@ export const UI = {
   /** Number of clicks to trigger easter egg */
   EASTER_EGG_CLICK_COUNT: 3,
 
-  /** Default audio volume for previews (0-1) */
-  DEFAULT_AUDIO_VOLUME: 0.5,
-
   /** Maximum number of suggestions to display in main suggestions grid */
   MAX_SUGGESTIONS_GRID: 5,
 
