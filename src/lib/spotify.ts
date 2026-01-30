@@ -97,7 +97,14 @@ async function spotifyFetch<T>(
     return {} as T;
   }
 
-  return JSON.parse(text);
+  try {
+    return JSON.parse(text);
+  } catch {
+    // If response is OK but not valid JSON, return empty object
+    // This can happen with some Spotify endpoints
+    console.error('Spotify returned non-JSON response:', text.substring(0, 50));
+    return {} as T;
+  }
 }
 
 export async function searchTracks(
