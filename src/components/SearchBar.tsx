@@ -63,6 +63,7 @@ export default function SearchBar({ onSearch, isLoading, inputRef, onFocus, onBl
   const [isMultiline, setIsMultiline] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
+  const [speechError, setSpeechError] = useState<string | null>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
   const localRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -157,40 +158,75 @@ export default function SearchBar({ onSearch, isLoading, inputRef, onFocus, onBl
       recognitionRef.current.abort();
     }
 
+    setSpeechError(null);
+
     const recognition = new SpeechRecognition();
     recognitionRef.current = recognition;
 
-    recognition.continuous = false;
+    // Keep listening until user stops or we get a final result
+    recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
 
     recognition.onstart = (): void => {
       setIsListening(true);
+      setSpeechError(null);
     };
 
     recognition.onresult = (event: SpeechRecognitionEvent): void => {
       const results = event.results;
       let transcript = '';
 
-      for (let i = event.resultIndex; i < results.length; i++) {
+      // Get the latest transcript
+      for (let i = 0; i < results.length; i++) {
         transcript += results[i][0].transcript;
       }
 
       setQuery(transcript);
 
-      // Auto-submit when we get a final result
-      if (results[results.length - 1].isFinal) {
-        if (transcript.trim()) {
-          if (debounceRef.current) {
-            clearTimeout(debounceRef.current);
-          }
-          onSearch(transcript.trim());
+      // Auto-submit when we get a final result (user paused speaking)
+      const lastResult = results[results.length - 1];
+      if (lastResult.isFinal && transcript.trim()) {
+        // Stop recognition and submit
+        recognition.stop();
+        if (debounceRef.current) {
+          clearTimeout(debounceRef.current);
         }
+        onSearch(transcript.trim());
       }
     };
 
     recognition.onerror = (event: { error: string }): void => {
       console.error('Speech recognition error:', event.error);
+
+      // Provide user-friendly error messages
+      let errorMessage = 'Voice search failed';
+      switch (event.error) {
+        case 'not-allowed':
+        case 'permission-denied':
+          errorMessage = 'Microphone access denied. Please allow microphone access.';
+          break;
+        case 'no-speech':
+          errorMessage = 'No speech detected. Try again.';
+          break;
+        case 'audio-capture':
+          errorMessage = 'No microphone found.';
+          break;
+        case 'network':
+          errorMessage = 'Network error. Check your connection.';
+          break;
+        case 'aborted':
+          // User cancelled, no error to show
+          errorMessage = '';
+          break;
+      }
+
+      if (errorMessage) {
+        setSpeechError(errorMessage);
+        // Clear error after 3 seconds
+        setTimeout(() => setSpeechError(null), 3000);
+      }
+
       setIsListening(false);
     };
 
@@ -199,7 +235,13 @@ export default function SearchBar({ onSearch, isLoading, inputRef, onFocus, onBl
       recognitionRef.current = null;
     };
 
-    recognition.start();
+    try {
+      recognition.start();
+    } catch (err) {
+      console.error('Failed to start speech recognition:', err);
+      setSpeechError('Failed to start voice search');
+      setTimeout(() => setSpeechError(null), 3000);
+    }
   };
 
   const stopVoiceSearch = (): void => {
@@ -362,8 +404,22 @@ export default function SearchBar({ onSearch, isLoading, inputRef, onFocus, onBl
         )}
       </div>
 
+      {/* Speech error message */}
+      {speechError && (
+        <p className="text-center text-xs text-red-400 mt-2" role="alert">
+          {speechError}
+        </p>
+      )}
+
+      {/* Listening indicator */}
+      {isListening && (
+        <p className="text-center text-xs text-spotify-green mt-2 animate-pulse">
+          Listening... speak now (click mic to stop)
+        </p>
+      )}
+
       {/* Hint for import feature */}
-      {!isMultiline && !isListening && !query && (
+      {!isMultiline && !isListening && !query && !speechError && (
         <p className="text-center text-xs text-spotify-lightgray/60 mt-2">
           Tip: Click <span className="inline-flex items-center"><svg className="w-3 h-3 mx-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg></span> to paste a list of tracks (one per line)
         </p>
