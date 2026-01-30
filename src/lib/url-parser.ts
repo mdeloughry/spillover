@@ -123,7 +123,10 @@ class AppleMusicParser implements PlatformParser {
   parse(url: URL): string | null {
     // music.apple.com/us/album/song-name/123456?i=789
     // music.apple.com/us/song/song-name/123456
-    if (url.pathname.includes('/album/') || url.pathname.includes('/song/')) {
+    // music.apple.com/us/station/station-name/ra.123456
+    if (url.pathname.includes('/album/') ||
+        url.pathname.includes('/song/') ||
+        url.pathname.includes('/station/')) {
       return url.href;
     }
     return null;
