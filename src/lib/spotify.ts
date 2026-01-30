@@ -240,6 +240,53 @@ export async function getRelatedArtists(
   return spotifyFetch<RelatedArtistsResponse>(`/artists/${artistId}/related-artists`, token);
 }
 
+/** Response from Spotify recommendations endpoint */
+export interface RecommendationsResponse {
+  /** Recommended tracks */
+  tracks: SpotifyTrack[];
+  /** Seeds used for recommendations */
+  seeds: Array<{
+    id: string;
+    type: 'track' | 'artist' | 'genre';
+    initialPoolSize: number;
+    afterFilteringSize: number;
+    afterRelinkingSize: number;
+  }>;
+}
+
+/**
+ * Get track recommendations based on seed tracks, artists, or genres
+ * Up to 5 seed values total across all types
+ * @param options - Recommendation options
+ * @param token - The access token
+ */
+export async function getRecommendations(
+  options: {
+    seedTracks?: string[];
+    seedArtists?: string[];
+    seedGenres?: string[];
+    limit?: number;
+    market?: string;
+  },
+  token: string
+): Promise<RecommendationsResponse> {
+  const params = new URLSearchParams();
+
+  if (options.seedTracks?.length) {
+    params.set('seed_tracks', options.seedTracks.slice(0, 5).join(','));
+  }
+  if (options.seedArtists?.length) {
+    params.set('seed_artists', options.seedArtists.slice(0, 5).join(','));
+  }
+  if (options.seedGenres?.length) {
+    params.set('seed_genres', options.seedGenres.slice(0, 5).join(','));
+  }
+  params.set('limit', (options.limit || 20).toString());
+  params.set('market', options.market || 'US');
+
+  return spotifyFetch<RecommendationsResponse>(`/recommendations?${params}`, token);
+}
+
 export async function getTrackById(trackId: string, token: string): Promise<SpotifyTrack> {
   return spotifyFetch<SpotifyTrack>(`/tracks/${trackId}`, token);
 }
