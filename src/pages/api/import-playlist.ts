@@ -22,12 +22,20 @@ interface ImportedTrack {
   status: 'found' | 'not_found';
 }
 
-// Fetch with timeout helper
+// Fetch with timeout and browser-like headers
 async function fetchWithTimeout(url: string, timeoutMs: number): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetch(url, { signal: controller.signal });
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Cache-Control': 'no-cache',
+      },
+    });
     return response;
   } finally {
     clearTimeout(timeoutId);
@@ -104,23 +112,152 @@ async function getPagePlaylistTracks(url: string, platform: string): Promise<Pla
 
   try {
     const response = await fetchWithTimeout(url, TIMEOUTS.EXTERNAL_API_MS);
-    if (!response.ok) return tracks;
+    if (!response.ok) {
+      console.error(`Failed to fetch ${platform} playlist: ${response.status}`);
+      return tracks;
+    }
 
     const html = await response.text();
 
     // Platform-specific extraction patterns
     if (platform === 'soundcloud') {
-      // SoundCloud embeds track info in JSON-LD or meta tags
-      const titleMatches = html.matchAll(/<meta\s+property="og:title"\s+content="([^"]+)"/gi);
-      for (const match of titleMatches) {
-        tracks.push({ title: match[1].replace(/\s*\|\s*Free Listening.*$/i, '').trim() });
-        if (tracks.length >= 50) break;
+      // Try multiple patterns for SoundCloud
+      // Pattern 1: JSON data in script tags
+      const jsonDataMatch = html.match(/<script[^>]*>window\.__sc_hydration\s*=\s*(\[[\s\S]*?\]);<\/script>/);
+      if (jsonDataMatch) {
+        try {
+          const data = JSON.parse(jsonDataMatch[1]);
+          for (const item of data) {
+            if (item.data?.tracks) {
+              for (const track of item.data.tracks) {
+                if (track.title && !tracks.some(t => t.title === track.title)) {
+                  tracks.push({
+                    title: track.title,
+                    artist: track.user?.username,
+                  });
+                }
+                if (tracks.length >= 50) break;
+              }
+            }
+          }
+        } catch { /* JSON parse failed */ }
       }
 
-      // Also try to extract from script JSON
-      const jsonMatch = html.match(/"tracks":\s*\[([\s\S]*?)\]/);
-      if (jsonMatch) {
-        const trackMatches = jsonMatch[1].matchAll(/"title":\s*"([^"]+)"/g);
+      // Pattern 2: Look for track titles in the page
+      if (tracks.length === 0) {
+        const titleMatches = html.matchAll(/"title":"([^"]+)","permalink_url"/g);
+        for (const match of titleMatches) {
+          if (!tracks.some(t => t.title === match[1])) {
+            tracks.push({ title: match[1] });
+          }
+          if (tracks.length >= 50) break;
+        }
+      }
+
+    } else if (platform === 'apple-music') {
+      // Apple Music - try multiple patterns
+      // Pattern 1: JSON-LD structured data
+      const jsonLdMatch = html.match(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi);
+      if (jsonLdMatch) {
+        for (const match of jsonLdMatch) {
+          try {
+            const jsonStr = match.replace(/<script[^>]*>|<\/script>/gi, '');
+            const data = JSON.parse(jsonStr);
+            if (data.track) {
+              for (const track of data.track) {
+                if (track.name && !tracks.some(t => t.title === track.name)) {
+                  tracks.push({
+                    title: track.name,
+                    artist: track.byArtist?.name,
+                  });
+                }
+                if (tracks.length >= 50) break;
+              }
+            }
+          } catch { /* JSON parse failed */ }
+        }
+      }
+
+      // Pattern 2: Look for track names in meta/data attributes
+      if (tracks.length === 0) {
+        const trackMatches = html.matchAll(/data-testid="track-title"[^>]*>([^<]+)</gi);
+        for (const match of trackMatches) {
+          const title = match[1].trim();
+          if (title && !tracks.some(t => t.title === title)) {
+            tracks.push({ title });
+          }
+          if (tracks.length >= 50) break;
+        }
+      }
+
+      // Pattern 3: Look in embedded JSON
+      if (tracks.length === 0) {
+        const songMatches = html.matchAll(/"name"\s*:\s*"([^"]+)"\s*,\s*"@type"\s*:\s*"MusicRecording"/gi);
+        for (const match of songMatches) {
+          if (!tracks.some(t => t.title === match[1])) {
+            tracks.push({ title: match[1] });
+          }
+          if (tracks.length >= 50) break;
+        }
+      }
+
+    } else if (platform === 'deezer') {
+      // Deezer - try multiple patterns
+      // Pattern 1: __DZR_APP_STATE__ JSON
+      const stateMatch = html.match(/__DZR_APP_STATE__\s*=\s*({[\s\S]*?})\s*<\/script>/);
+      if (stateMatch) {
+        try {
+          const data = JSON.parse(stateMatch[1]);
+          const songs = data.DATA?.SONGS?.data || data.SONGS?.data || [];
+          for (const song of songs) {
+            if (song.SNG_TITLE && !tracks.some(t => t.title === song.SNG_TITLE)) {
+              tracks.push({
+                title: song.SNG_TITLE,
+                artist: song.ART_NAME,
+              });
+            }
+            if (tracks.length >= 50) break;
+          }
+        } catch { /* JSON parse failed */ }
+      }
+
+      // Pattern 2: Direct regex for track data
+      if (tracks.length === 0) {
+        const trackMatches = html.matchAll(/"SNG_TITLE"\s*:\s*"([^"]+)"/gi);
+        const artistMatches = html.matchAll(/"ART_NAME"\s*:\s*"([^"]+)"/gi);
+        const titles = [...trackMatches].map(m => m[1]);
+        const artists = [...artistMatches].map(m => m[1]);
+
+        for (let i = 0; i < Math.min(titles.length, 50); i++) {
+          if (!tracks.some(t => t.title === titles[i])) {
+            tracks.push({ title: titles[i], artist: artists[i] });
+          }
+        }
+      }
+
+    } else if (platform === 'tidal') {
+      // Tidal - try multiple patterns
+      // Pattern 1: NEXT_DATA JSON
+      const nextDataMatch = html.match(/<script[^>]*id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
+      if (nextDataMatch) {
+        try {
+          const data = JSON.parse(nextDataMatch[1]);
+          const items = data.props?.pageProps?.playlist?.items || [];
+          for (const item of items) {
+            if (item.item?.title && !tracks.some(t => t.title === item.item.title)) {
+              tracks.push({
+                title: item.item.title,
+                artist: item.item.artists?.[0]?.name,
+              });
+            }
+            if (tracks.length >= 50) break;
+          }
+        } catch { /* JSON parse failed */ }
+      }
+
+      // Pattern 2: Look for track data in page
+      if (tracks.length === 0) {
+        const trackMatches = html.matchAll(/"title"\s*:\s*"([^"]+)"\s*,\s*"artists"/gi);
         for (const match of trackMatches) {
           if (!tracks.some(t => t.title === match[1])) {
             tracks.push({ title: match[1] });
@@ -128,40 +265,38 @@ async function getPagePlaylistTracks(url: string, platform: string): Promise<Pla
           if (tracks.length >= 50) break;
         }
       }
-    } else if (platform === 'apple-music') {
-      // Apple Music uses structured data
-      const trackMatches = html.matchAll(/"name":\s*"([^"]+)",\s*"@type":\s*"MusicRecording"/gi);
-      for (const match of trackMatches) {
-        tracks.push({ title: match[1] });
-        if (tracks.length >= 50) break;
-      }
-    } else if (platform === 'deezer') {
-      // Deezer embeds track data in the page
-      const trackMatches = html.matchAll(/"SNG_TITLE":\s*"([^"]+)"/gi);
-      const artistMatches = html.matchAll(/"ART_NAME":\s*"([^"]+)"/gi);
-      const titles = [...trackMatches].map(m => m[1]);
-      const artists = [...artistMatches].map(m => m[1]);
 
-      for (let i = 0; i < Math.min(titles.length, 50); i++) {
-        tracks.push({ title: titles[i], artist: artists[i] });
-      }
-    } else if (platform === 'tidal') {
-      // Tidal uses structured data
-      const trackMatches = html.matchAll(/"title":\s*"([^"]+)",\s*"artist":\s*"([^"]+)"/gi);
+    } else if (platform === 'amazon-music') {
+      // Amazon Music - try to find track data
+      const trackMatches = html.matchAll(/"title"\s*:\s*"([^"]+)"\s*,\s*"artistName"\s*:\s*"([^"]+)"/gi);
       for (const match of trackMatches) {
-        tracks.push({ title: match[1], artist: match[2] });
+        if (!tracks.some(t => t.title === match[1])) {
+          tracks.push({ title: match[1], artist: match[2] });
+        }
         if (tracks.length >= 50) break;
       }
+
     } else {
       // Generic fallback: look for common patterns
-      const trackMatches = html.matchAll(/<meta\s+property="music:song"\s+content="([^"]+)"/gi);
-      for (const match of trackMatches) {
-        tracks.push({ title: match[1] });
-        if (tracks.length >= 50) break;
+      const patterns = [
+        /<meta\s+property="music:song"\s+content="([^"]+)"/gi,
+        /"trackName"\s*:\s*"([^"]+)"/gi,
+        /"songName"\s*:\s*"([^"]+)"/gi,
+      ];
+
+      for (const pattern of patterns) {
+        const matches = html.matchAll(pattern);
+        for (const match of matches) {
+          if (!tracks.some(t => t.title === match[1])) {
+            tracks.push({ title: match[1] });
+          }
+          if (tracks.length >= 50) break;
+        }
+        if (tracks.length > 0) break;
       }
     }
-  } catch {
-    // Silently fail
+  } catch (err) {
+    console.error(`Error scraping ${platform} playlist:`, err);
   }
 
   return tracks;
