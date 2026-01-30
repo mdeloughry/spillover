@@ -141,6 +141,13 @@ export default function SearchBar({ onSearch, isLoading, inputRef, onFocus, onBl
     ref.current?.focus();
   };
 
+  const handleEnterImportMode = (): void => {
+    setIsMultiline(true);
+    setQuery('');
+    // Focus textarea after state update
+    setTimeout(() => textareaRef.current?.focus(), 0);
+  };
+
   const startVoiceSearch = (): void => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
@@ -236,7 +243,7 @@ export default function SearchBar({ onSearch, isLoading, inputRef, onFocus, onBl
               onChange={handleChange}
               onFocus={onFocus}
               onBlur={onBlur}
-              placeholder="Paste track list (one per line)&#10;Format: Artist - Title"
+              placeholder="Paste your track list here (one per line)&#10;&#10;Supported formats:&#10;  Artist - Song Title&#10;  Song Title by Artist&#10;  Just the song title"
               className="w-full px-4 py-3 pl-12 pr-20 text-base bg-spotify-gray/30 border border-spotify-gray/50 rounded-2xl text-white placeholder-spotify-lightgray focus:outline-none focus:border-spotify-green focus:ring-2 focus:ring-spotify-green/20 transition-all resize-none"
               rows={Math.min(lineCount + 1, 8)}
               autoComplete="off"
@@ -285,7 +292,7 @@ export default function SearchBar({ onSearch, isLoading, inputRef, onFocus, onBl
               onFocus={onFocus}
               onBlur={onBlur}
               placeholder="Search for tracks, artists, or paste a URL..."
-              className={`w-full px-4 py-3 pl-12 ${speechSupported ? 'pr-12' : ''} text-lg bg-spotify-gray/30 border border-spotify-gray/50 rounded-full text-white placeholder-spotify-lightgray focus:outline-none focus:border-spotify-green focus:ring-2 focus:ring-spotify-green/20 transition-all ${isListening ? 'border-red-500 ring-2 ring-red-500/20' : ''}`}
+              className={`w-full px-4 py-3 pl-12 ${speechSupported ? 'pr-24' : 'pr-14'} text-lg bg-spotify-gray/30 border border-spotify-gray/50 rounded-full text-white placeholder-spotify-lightgray focus:outline-none focus:border-spotify-green focus:ring-2 focus:ring-spotify-green/20 transition-all ${isListening ? 'border-red-500 ring-2 ring-red-500/20' : ''}`}
               autoComplete="off"
               aria-autocomplete="list"
             />
@@ -303,6 +310,18 @@ export default function SearchBar({ onSearch, isLoading, inputRef, onFocus, onBl
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
+            {/* Import List Button */}
+            <button
+              type="button"
+              onClick={handleEnterImportMode}
+              className={`absolute top-1/2 -translate-y-1/2 p-2 rounded-full transition-all text-spotify-lightgray hover:text-white hover:bg-spotify-gray/50 ${speechSupported ? 'right-12' : 'right-3'}`}
+              aria-label="Import track list"
+              title="Paste a list of tracks"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+            </button>
             {/* Voice Search Button */}
             {speechSupported && (
               <button
@@ -336,12 +355,19 @@ export default function SearchBar({ onSearch, isLoading, inputRef, onFocus, onBl
         )}
 
         {isLoading && !isMultiline && !isListening && (
-          <div className={`absolute top-1/2 -translate-y-1/2 ${speechSupported ? 'right-14' : 'right-4'}`} role="status" aria-label="Searching">
+          <div className={`absolute top-1/2 -translate-y-1/2 ${speechSupported ? 'right-24' : 'right-14'}`} role="status" aria-label="Searching">
             <div className="w-5 h-5 border-2 border-spotify-green border-t-transparent rounded-full animate-spin" aria-hidden="true" />
             <span className="sr-only">Searching...</span>
           </div>
         )}
       </div>
+
+      {/* Hint for import feature */}
+      {!isMultiline && !isListening && !query && (
+        <p className="text-center text-xs text-spotify-lightgray/60 mt-2">
+          Tip: Click <span className="inline-flex items-center"><svg className="w-3 h-3 mx-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg></span> to paste a list of tracks (one per line)
+        </p>
+      )}
     </form>
   );
 }
