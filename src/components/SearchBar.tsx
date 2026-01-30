@@ -12,6 +12,8 @@ interface SearchBarProps {
   onFocus?: () => void;
   /** Callback when input loses focus */
   onBlur?: () => void;
+  /** Initial value to populate the search input */
+  initialValue?: string;
 }
 
 /** Extend Window interface for Web Speech API */
@@ -58,8 +60,8 @@ declare global {
   }
 }
 
-export default function SearchBar({ onSearch, isLoading, inputRef, onFocus, onBlur }: SearchBarProps) {
-  const [query, setQuery] = useState('');
+export default function SearchBar({ onSearch, isLoading, inputRef, onFocus, onBlur, initialValue }: SearchBarProps) {
+  const [query, setQuery] = useState(initialValue || '');
   const [isMultiline, setIsMultiline] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
@@ -75,6 +77,13 @@ export default function SearchBar({ onSearch, isLoading, inputRef, onFocus, onBl
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     setSpeechSupported(!!SpeechRecognition);
   }, []);
+
+  // Update query when initialValue changes (e.g., from URL params)
+  useEffect(() => {
+    if (initialValue) {
+      setQuery(initialValue);
+    }
+  }, [initialValue]);
 
   const debouncedSearch = useCallback(
     (value: string) => {

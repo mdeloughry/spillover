@@ -385,6 +385,7 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
           inputRef={searchInputRef}
           onFocus={() => setShowHistory(true)}
           onBlur={() => setTimeout(() => setShowHistory(false), 200)}
+          initialValue={initialQuery}
         />
 
         {/* Search History Dropdown */}
