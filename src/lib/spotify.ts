@@ -1,3 +1,6 @@
+// Re-export confidence score types for convenience
+export type { ConfidenceScore, ConfidenceLevel } from './confidence-score';
+
 const SPOTIFY_API_BASE = 'https://api.spotify.com/v1';
 
 export interface SpotifyImage {

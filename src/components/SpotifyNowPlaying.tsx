@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import type { SpotifyTrack } from '../lib/spotify';
 import type { TrackWithLiked } from '../lib/api-client';
 import { formatDuration, getAlbumImageUrl, formatArtists } from '../lib/spotify';
-import { copyTrackUrl } from '../lib/clipboard';
+import { shareTrackUrl } from '../lib/clipboard';
 import { captureError } from '../lib/error-tracking';
 import { POLLING, UI } from '../lib/constants';
 import PsychedelicVisualizer from './PsychedelicVisualizer';
@@ -36,10 +36,14 @@ export default function SpotifyNowPlaying({ onTrackSelect, onTrackChange }: Spot
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleShare = async (): Promise<void> => {
-    const result = await copyTrackUrl(nowPlaying?.track?.external_urls?.spotify);
-    if (!result.success) {
-      captureError(result.error || 'Failed to copy track URL to clipboard', {
-        action: 'copy_track_url',
+    const result = await shareTrackUrl(
+      nowPlaying?.track?.external_urls?.spotify,
+      nowPlaying?.track?.name
+    );
+    if (!result.success && result.error !== 'Share cancelled') {
+      captureError(result.error || 'Failed to share track', {
+        action: 'share_track',
+        method: result.method,
         trackId: nowPlaying?.track?.id,
         trackName: nowPlaying?.track?.name,
       });
@@ -233,8 +237,8 @@ export default function SpotifyNowPlaying({ onTrackSelect, onTrackChange }: Spot
             <button
               onClick={handleShare}
               className="p-1.5 sm:p-2 rounded-full text-spotify-lightgray hover:text-white transition-colors"
-              title="Copy track link"
-              aria-label={`Copy link for ${track.name} to clipboard`}
+              title="Share track"
+              aria-label={`Share ${track.name}`}
             >
               <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path

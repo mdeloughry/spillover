@@ -2,6 +2,7 @@ import { searchTracks, checkSavedTracks, getTrackById } from '../../lib/spotify'
 import { parseTrackUrl } from '../../lib/url-parser';
 import { withBodyApiHandler, validateExternalUrl, errorResponse } from '../../lib/api-utils';
 import { RATE_LIMIT, API_PATHS, TIMEOUTS } from '../../lib/constants';
+import { calculateConfidence } from '../../lib/confidence-score';
 
 interface ImportUrlRequestBody {
   url: string;
@@ -147,9 +148,11 @@ export const POST = withBodyApiHandler<ImportUrlRequestBody>(
       likedStatus = await checkSavedTracks(trackIds, token);
     }
 
+    // Calculate confidence scores for each track
     const tracksWithLiked = searchResults.tracks.items.map((track, index) => ({
       ...track,
       isLiked: likedStatus[index] || false,
+      confidence: calculateConfidence(searchQuery, undefined, track),
     }));
 
     logger.info(200);

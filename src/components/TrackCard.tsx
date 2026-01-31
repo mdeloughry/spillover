@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import type { SpotifyTrack } from '../lib/spotify';
+import type { SpotifyTrack, ConfidenceScore } from '../lib/spotify';
 import { formatDuration, getAlbumImageUrl, formatArtists } from '../lib/spotify';
-import { copyTrackUrl } from '../lib/clipboard';
+import { shareTrackUrl } from '../lib/clipboard';
 import { captureError } from '../lib/error-tracking';
 import TruncatedText from './TruncatedText';
 
 /** Props for the track card component */
 interface TrackCardProps {
   /** Track data with liked status */
-  track: SpotifyTrack & { isLiked: boolean };
+  track: SpotifyTrack & { isLiked: boolean; confidence?: ConfidenceScore };
   /** Callback to toggle like status */
   onLikeToggle: (trackId: string, isLiked: boolean) => Promise<void>;
   /** Callback to open playlist selector */
@@ -40,10 +40,11 @@ export default function TrackCard({
   const artists = formatArtists(track.artists);
 
   const handleShareClick = async (): Promise<void> => {
-    const result = await copyTrackUrl(track.external_urls?.spotify);
-    if (!result.success) {
-      captureError(result.error || 'Failed to copy track URL to clipboard', {
-        action: 'copy_track_url',
+    const result = await shareTrackUrl(track.external_urls?.spotify, track.name);
+    if (!result.success && result.error !== 'Share cancelled') {
+      captureError(result.error || 'Failed to share track', {
+        action: 'share_track',
+        method: result.method,
         trackId: track.id,
         trackName: track.name,
       });
@@ -161,6 +162,32 @@ export default function TrackCard({
             </span>
           )}
 
+          {/* Confidence badge - shown for imported tracks */}
+          {track.confidence && (
+            <span
+              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.6rem] sm:text-xs uppercase tracking-[0.16em] ${
+                track.confidence.level === 'high'
+                  ? 'border-emerald-500/30 text-emerald-400 bg-emerald-500/10'
+                  : track.confidence.level === 'medium'
+                  ? 'border-amber-500/30 text-amber-400 bg-amber-500/10'
+                  : 'border-red-500/30 text-red-400 bg-red-500/10'
+              }`}
+              title={`Match confidence: ${track.confidence.score}% (Title: ${track.confidence.titleScore}%, Artist: ${track.confidence.artistScore}%)`}
+            >
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  track.confidence.level === 'high'
+                    ? 'bg-emerald-400'
+                    : track.confidence.level === 'medium'
+                    ? 'bg-amber-400'
+                    : 'bg-red-400'
+                }`}
+                aria-hidden="true"
+              />
+              {track.confidence.score}% match
+            </span>
+          )}
+
           {/* Actions */}
           <div className="flex items-center gap-2">
             {/* Like Button - always visible */}
@@ -268,8 +295,8 @@ export default function TrackCard({
             <button
               onClick={handleShareClick}
               className="p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 rounded-full text-spotify-lightgray hover:text-white transition-colors flex items-center justify-center"
-              aria-label={`Copy link for ${track.name} to clipboard`}
-              title="Copy track link"
+              aria-label={`Share ${track.name}`}
+              title="Share track"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path

@@ -1,0 +1,37 @@
+---
+/**
+ * Share Target Handler
+ * Receives shared content from mobile share sheet and redirects to main app
+ * Part of PWA share_target configuration
+ */
+
+// Get shared data from URL params
+const url = Astro.url.searchParams.get('url');
+const title = Astro.url.searchParams.get('title');
+const text = Astro.url.searchParams.get('text');
+
+// Extract query from shared data
+// Priority: url > text (might contain a URL) > title
+let query = '';
+
+if (url) {
+  // Direct URL shared
+  query = url;
+} else if (text) {
+  // Check if text contains a URL
+  const urlMatch = text.match(/https?:\/\/[^\s]+/);
+  if (urlMatch) {
+    query = urlMatch[0];
+  } else {
+    // Use text as search query (might be "Artist - Song")
+    query = text.trim();
+  }
+} else if (title) {
+  // Use title as search query
+  query = title.trim();
+}
+
+// Redirect to main app with query
+const redirectUrl = query ? `/?q=${encodeURIComponent(query)}` : '/';
+return Astro.redirect(redirectUrl, 302);
+---

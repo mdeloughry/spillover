@@ -45,6 +45,14 @@ interface RecentAction {
   timestamp: Date;
 }
 
+/** Confidence statistics from playlist import */
+interface ConfidenceStats {
+  high: number;
+  medium: number;
+  low: number;
+  avgScore: number;
+}
+
 /** Result summary from importing an external playlist */
 interface PlaylistImportResult {
   /** Source platform (youtube, soundcloud, etc.) */
@@ -54,6 +62,7 @@ interface PlaylistImportResult {
     total: number;
     found: number;
     notFound: number;
+    confidence?: ConfidenceStats;
   };
 }
 
@@ -465,7 +474,7 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
               Playlist imported from {PLATFORM_NAMES[playlistImport.platform] || playlistImport.platform}
             </span>
           </div>
-          <div className="mt-2 flex items-center gap-4 text-sm text-spotify-lightgray">
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-spotify-lightgray">
             <span className="flex items-center gap-1">
               <span className="text-spotify-green font-medium">{playlistImport.summary.found}</span> found
             </span>
@@ -478,6 +487,34 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
               ({playlistImport.summary.total} total)
             </span>
           </div>
+          {/* Confidence breakdown */}
+          {playlistImport.summary.confidence && playlistImport.summary.confidence.avgScore > 0 && (
+            <div className="mt-3 pt-3 border-t border-white/10">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                <span className="text-spotify-lightgray">Match quality:</span>
+                <span className="flex items-center gap-1">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" aria-hidden="true" />
+                  <span className="text-emerald-400 font-medium">{playlistImport.summary.confidence.high}</span>
+                  <span className="text-spotify-lightgray/70">high</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="h-2 w-2 rounded-full bg-amber-400" aria-hidden="true" />
+                  <span className="text-amber-400 font-medium">{playlistImport.summary.confidence.medium}</span>
+                  <span className="text-spotify-lightgray/70">medium</span>
+                </span>
+                {playlistImport.summary.confidence.low > 0 && (
+                  <span className="flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-red-400" aria-hidden="true" />
+                    <span className="text-red-400 font-medium">{playlistImport.summary.confidence.low}</span>
+                    <span className="text-spotify-lightgray/70">low</span>
+                  </span>
+                )}
+                <span className="text-spotify-lightgray/60">
+                  (avg: {playlistImport.summary.confidence.avgScore}%)
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

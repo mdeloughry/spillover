@@ -1,10 +1,23 @@
 /**
- * Clipboard utilities for copying text to clipboard with fallback support
+ * Clipboard and sharing utilities
+ * Supports Web Share API for mobile and clipboard fallback
  */
 
 export interface ClipboardResult {
   success: boolean;
   error?: string;
+}
+
+export interface ShareResult {
+  success: boolean;
+  method: 'share' | 'clipboard';
+  error?: string;
+}
+
+export interface ShareData {
+  title?: string;
+  text?: string;
+  url: string;
 }
 
 /**
@@ -56,4 +69,69 @@ export async function copyTrackUrl(trackUrl: string | undefined): Promise<Clipbo
     return { success: false, error: 'No track URL available' };
   }
   return copyToClipboard(trackUrl);
+}
+
+/**
+ * Check if Web Share API is available
+ */
+export function canShare(): boolean {
+  return typeof navigator !== 'undefined' && 'share' in navigator;
+}
+
+/**
+ * Share content using Web Share API or fall back to clipboard copy
+ * Tries navigator.share() first (mobile native share), then clipboard
+ * @param data - The share data (title, text, url)
+ * @returns Promise resolving to share result with method used
+ */
+export async function shareOrCopy(data: ShareData): Promise<ShareResult> {
+  if (!data.url) {
+    return { success: false, method: 'clipboard', error: 'No URL provided' };
+  }
+
+  // Try Web Share API first (available on mobile and some desktop browsers)
+  if (canShare()) {
+    try {
+      await navigator.share({
+        title: data.title,
+        text: data.text,
+        url: data.url,
+      });
+      return { success: true, method: 'share' };
+    } catch (error) {
+      // User cancelled or share failed - fall through to clipboard
+      // AbortError means user cancelled, which is not an error for our purposes
+      if (error instanceof Error && error.name === 'AbortError') {
+        return { success: false, method: 'share', error: 'Share cancelled' };
+      }
+      // For other errors, fall through to clipboard
+    }
+  }
+
+  // Fall back to clipboard copy
+  const clipboardResult = await copyToClipboard(data.url);
+  return {
+    success: clipboardResult.success,
+    method: 'clipboard',
+    error: clipboardResult.error,
+  };
+}
+
+/**
+ * Share a Spotify track URL using Web Share API or clipboard
+ * @param trackUrl - The Spotify track URL
+ * @param trackName - Optional track name for share title
+ * @returns Promise resolving to share result
+ */
+export async function shareTrackUrl(
+  trackUrl: string | undefined,
+  trackName?: string
+): Promise<ShareResult> {
+  if (!trackUrl) {
+    return { success: false, method: 'clipboard', error: 'No track URL available' };
+  }
+  return shareOrCopy({
+    title: trackName ? `${trackName} on Spotify` : 'Check out this track on Spotify',
+    url: trackUrl,
+  });
 }

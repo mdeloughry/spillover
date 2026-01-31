@@ -3,6 +3,7 @@ import { parsePlaylistUrl, parseTextTracks, isTextTrackList } from '../../lib/pl
 import { withBodyApiHandler, validateExternalUrl, errorResponse } from '../../lib/api-utils';
 import { RATE_LIMIT, TIMEOUTS } from '../../lib/constants';
 import type { SpotifyTrack } from '../../lib/spotify';
+import { calculateConfidence, type ConfidenceScore } from '../../lib/confidence-score';
 
 /** Request body for playlist import - can be URL or text */
 interface ImportPlaylistRequestBody {
@@ -18,8 +19,9 @@ interface PlaylistTrackInfo {
 interface ImportedTrack {
   originalTitle: string;
   originalArtist?: string;
-  spotifyTrack: (SpotifyTrack & { isLiked: boolean }) | null;
+  spotifyTrack: (SpotifyTrack & { isLiked: boolean; confidence?: ConfidenceScore }) | null;
   status: 'found' | 'not_found';
+  confidence?: ConfidenceScore;
 }
 
 // Fetch with timeout and browser-like headers
@@ -364,11 +366,13 @@ export const POST = withBodyApiHandler<ImportPlaylistRequestBody>(
 
             if (track) {
               const [isLiked] = await checkSavedTracks([track.id], token);
+              const confidence = calculateConfidence(info.title, info.artist, track);
               return {
                 originalTitle: info.title,
                 originalArtist: info.artist,
-                spotifyTrack: { ...track, isLiked },
+                spotifyTrack: { ...track, isLiked, confidence },
                 status: 'found' as const,
+                confidence,
               };
             }
 
@@ -448,11 +452,13 @@ export const POST = withBodyApiHandler<ImportPlaylistRequestBody>(
 
               if (track) {
                 const [isLiked] = await checkSavedTracks([track.id], token);
+                const confidence = calculateConfidence(info.title, info.artist, track);
                 return {
                   originalTitle: info.title,
                   originalArtist: info.artist,
-                  spotifyTrack: { ...track, isLiked },
+                  spotifyTrack: { ...track, isLiked, confidence },
                   status: 'found' as const,
+                  confidence,
                 };
               }
 
@@ -480,6 +486,17 @@ export const POST = withBodyApiHandler<ImportPlaylistRequestBody>(
     const foundCount = importedTracks.filter(t => t.status === 'found').length;
     const totalCount = importedTracks.length;
 
+    // Calculate confidence statistics
+    const tracksWithConfidence = importedTracks.filter(t => t.confidence);
+    const confidenceStats = {
+      high: tracksWithConfidence.filter(t => t.confidence?.level === 'high').length,
+      medium: tracksWithConfidence.filter(t => t.confidence?.level === 'medium').length,
+      low: tracksWithConfidence.filter(t => t.confidence?.level === 'low').length,
+      avgScore: tracksWithConfidence.length > 0
+        ? Math.round(tracksWithConfidence.reduce((sum, t) => sum + (t.confidence?.score || 0), 0) / tracksWithConfidence.length)
+        : 0,
+    };
+
     logger.info(200);
     return new Response(
       JSON.stringify({
@@ -490,6 +507,7 @@ export const POST = withBodyApiHandler<ImportPlaylistRequestBody>(
           total: totalCount,
           found: foundCount,
           notFound: totalCount - foundCount,
+          confidence: confidenceStats,
         },
       }),
       { headers }
