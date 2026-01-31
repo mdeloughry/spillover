@@ -232,7 +232,10 @@ export default function SearchBar({ onSearch, isLoading, inputRef, onFocus, onBl
           errorMessage = 'No microphone found.';
           break;
         case 'network':
-          errorMessage = 'Network error. Check your connection.';
+        case 'service-not-allowed':
+          // This usually means the speech recognition service is blocked or unavailable
+          // Common causes: ad blockers, privacy extensions, or non-HTTPS connections
+          errorMessage = 'Speech service unavailable. Try again or use text search.';
           break;
         case 'aborted':
           // User cancelled, no error to show
