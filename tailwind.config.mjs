@@ -4,14 +4,33 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Spillover brand colors (spotify- prefix kept for compatibility)
+        // Spillover brand colors
+        spillover: {
+          obsidian: '#0D0D0D',
+          cyan: '#00F0FF',
+          cyan_dim: 'rgba(0, 240, 255, 0.15)',
+          indigo: '#6366F1',
+          gold: '#FFD700',
+          black: '#0A0A0A',
+          white: '#FAFAFA',
+          gray: '#333333',
+          lightgray: '#A1A1AA'
+        },
+        // Kept for backward compatibility with existing comps temporarily
         spotify: {
-          green: '#22c55e',  // Tailwind green-500, distinct from Spotify's #1DB954
-          black: '#0f0f0f',
-          white: '#FFFFFF',
-          gray: '#404040',
-          lightgray: '#a3a3a3'
+          green: '#00F0FF',  // Mapped to Cyan for seamless transition
+          black: '#0D0D0D',  // Mapped to Obsidian
+          white: '#FAFAFA',
+          gray: '#333333',
+          lightgray: '#A1A1AA'
         }
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        display: ['Outfit', 'sans-serif'],
+      },
+      backgroundImage: {
+        'glass-gradient': 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
       }
     }
   },

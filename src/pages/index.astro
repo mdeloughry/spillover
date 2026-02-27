@@ -50,21 +50,21 @@ const initialUrl = Astro.url.searchParams.get("url") || "";
         <div class="max-w-5xl mx-auto px-4 py-12">
           <div class="mb-7 flex items-end justify-between gap-4">
             <div>
-              <p class="text-xs uppercase tracking-[0.26em] text-emerald-300/80">
+              <p class="font-display text-xs uppercase tracking-[0.26em] text-spillover-cyan/80">
                 Session
               </p>
-              <h2 class="mt-2 text-[1.6rem] sm:text-[1.8rem] font-semibold tracking-tight">
+              <h2 class="mt-2 text-[1.6rem] sm:text-[1.8rem] font-display font-bold tracking-tight text-spillover-white">
                 Save what you are listening to, from anywhere
               </h2>
-              <p class="mt-2 text-[0.9rem] text-spotify-lightgray/90 leading-relaxed">
+              <p class="mt-2 text-[0.9rem] text-spillover-lightgray/90 leading-relaxed font-sans">
                 Paste a link or type a title, then send tracks straight into
                 your Spotify library and playlists.
               </p>
             </div>
-            <div class="hidden text-right text-xs text-spotify-lightgray sm:block">
+            <div class="hidden text-right text-xs text-spillover-lightgray sm:block font-sans">
               <p>
                 Tip: Press
-                <span class="mx-1 inline-flex items-center justify-center rounded border border-spotify-gray/60 bg-black/40 px-1.5 py-0.5 text-[0.7rem]">
+                <span class="mx-1 inline-flex items-center justify-center rounded border border-spillover-gray/60 bg-spillover-black/80 px-1.5 py-0.5 text-[0.7rem]">
                   /
                 </span>
                 to jump to search
@@ -77,132 +77,114 @@ const initialUrl = Astro.url.searchParams.get("url") || "";
         <div class="max-w-5xl mx-auto px-4 py-16">
           <div class="grid gap-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] items-center">
             <div class="max-w-full">
-              <h2 class="mt-6 text-[1.9rem] sm:text-[2.3rem] md:text-[2.6rem] font-bold tracking-tight leading-snug break-words">
+              <h2 class="mt-6 text-[1.9rem] sm:text-[2.6rem] md:text-[3.2rem] font-display font-extrabold tracking-tight leading-[1.1] break-words text-spillover-white">
                 Your music lives all-over.
-                <span class="block bg-gradient-to-r from-emerald-300 via-emerald-200 to-sky-300 bg-clip-text text-transparent">
+                <span class="block mt-1 bg-gradient-to-r from-spillover-cyan via-spillover-indigo to-spillover-cyan bg-clip-text text-transparent">
                   Your library shouldn't.
                 </span>
-                <span class="block bg-gradient-to-r from-emerald-300 via-emerald-200 to-sky-300 bg-clip-text text-transparent">
+                <span class="block mt-1 bg-gradient-to-r from-spillover-white to-spillover-lightgray bg-clip-text text-transparent opacity-90">
                   Keep everything together.
                 </span>
               </h2>
-              <p class="mt-4 text-[0.95rem] sm:text-[1.05rem] text-spotify-lightgray/95 max-w-xl leading-relaxed break-words">
+              <p class="mt-6 text-[1.05rem] sm:text-[1.15rem] text-spillover-lightgray max-w-xl leading-relaxed break-words font-sans font-light">
                 You discover tracks on YouTube, radio, mixes and random links.
-                Spillover is the quiet little bridge that makes sure they end up
-                in your Spotify library.
+                Spillover is the quiet, powerful bridge that ensures they end up
+                in your music library flawlessly.
               </p>
 
-              <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                <div class="shrink-0">
+              <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+                <div class="shrink-0 group relative">
+                    <div class="absolute -inset-1 rounded-full bg-gradient-to-r from-spillover-cyan to-spillover-indigo opacity-30 blur group-hover:opacity-50 transition duration-500"></div>
                   <AuthButton client:load isAuthenticated={false} />
                 </div>
-                <p class="text-xs text-spotify-lightgray max-w-xs sm:ml-1">
-                  No extra account. Just Spotify.
+                <p class="text-xs text-spillover-lightgray max-w-xs sm:ml-2 font-medium tracking-wide">
+                  INDUSTRY STANDARD CAPTURE. <br/>JUST CONNECT SPOTIFY.
                 </p>
               </div>
 
-              <div class="mt-4">
+              <div class="mt-6">
                 <a
                   href="/about"
-                  class="inline-flex items-center gap-2 text-sm text-spotify-lightgray hover:text-white transition-colors group"
+                  class="inline-flex items-center gap-2 text-sm text-spillover-lightgray font-medium hover:text-spillover-cyan transition-colors group"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Learn how it works
-                  <svg class="w-3 h-3 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-spillover-cyan opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-spillover-cyan"></span>
+                  </span>
+                  Learn how the engine works
+                  <svg class="w-3 h-3 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
               </div>
 
-              <dl class="mt-10 grid gap-6 text-sm sm:grid-cols-2">
-                <div class="rounded-2xl border border-white/5 bg-white/[0.02] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.6)]">
-                  <dt class="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-spotify-lightgray">
-                    <span class="h-1 w-6 rounded-full bg-emerald-400" />
+              <dl class="mt-12 grid gap-6 text-sm sm:grid-cols-2">
+                <div class="relative overflow-hidden group rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.03] to-transparent p-6 shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-md transition-all hover:border-spillover-cyan/30">
+                  <div class="absolute inset-x-0 -top-px h-px w-full bg-gradient-to-r from-transparent via-spillover-cyan/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <dt class="flex items-center gap-3 text-xs font-display font-semibold uppercase tracking-[0.2em] text-spillover-lightgray">
+                    <span class="h-1.5 w-6 rounded-full bg-spillover-cyan shadow-[0_0_10px_rgba(0,240,255,0.8)]" />
                     Quick capture
                   </dt>
-                  <dd class="mt-3 text-sm text-spotify-white">
-                    Search by title, or paste a YouTube, SoundCloud, Spotify or other music link.
-                    Spillover turns it into something you can save.
+                  <dd class="mt-4 text-[0.95rem] text-spillover-white/90 leading-relaxed font-light">
+                    Search by title, or paste a YouTube, SoundCloud, or other music link.
+                    Spillover engine parses it instantly.
                   </dd>
                 </div>
 
-                <div class="rounded-2xl border border-white/5 bg-white/[0.02] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.6)]">
-                  <dt class="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-spotify-lightgray">
-                    <span class="h-1 w-6 rounded-full bg-sky-400" />
-                    Lives with your listening
+                <div class="relative overflow-hidden group rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.03] to-transparent p-6 shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-md transition-all hover:border-spillover-indigo/30">
+                  <div class="absolute inset-x-0 -top-px h-px w-full bg-gradient-to-r from-transparent via-spillover-indigo/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <dt class="flex items-center gap-3 text-xs font-display font-semibold uppercase tracking-[0.2em] text-spillover-lightgray">
+                    <span class="h-1.5 w-6 rounded-full bg-spillover-indigo shadow-[0_0_10px_rgba(99,102,241,0.8)]" />
+                    Studio Integration
                   </dt>
-                  <dd class="mt-3 text-sm text-spotify-white">
-                    Use it as a small window next to whatever you are listening
-                    to. Like tracks, drop them into playlists, move on.
+                  <dd class="mt-4 text-[0.95rem] text-spillover-white/90 leading-relaxed font-light">
+                    Use it as a floating utility window next to your DAW. Like tracks, drop them into playlists, move on.
                   </dd>
                 </div>
               </dl>
             </div>
 
             <div class="relative">
-              <div class="pointer-events-none absolute -inset-12 -z-10 bg-[radial-gradient(circle_at_top,_rgba(74,222,128,0.22),_transparent_55%),radial-gradient(circle_at_bottom,_rgba(56,189,248,0.18),_transparent_55%)] opacity-80" />
-              <div class="relative space-y-4">
+              <div class="pointer-events-none absolute -inset-16 -z-10 bg-[radial-gradient(circle_at_top,_rgba(0,240,255,0.12),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(99,102,241,0.15),_transparent_60%)] opacity-100 mix-blend-screen" />
+              <div class="relative space-y-6">
                 <!-- External player mock (e.g. YouTube tab) -->
-                <div class="rounded-3xl border border-white/10 bg-black/70 px-5 py-4 shadow-[0_26px_80px_rgba(0,0,0,0.9)] backdrop-blur-xl">
-                  <div class="mb-2 flex items-center justify-between gap-3 text-[0.7rem] text-spotify-lightgray/90">
+                <div class="rounded-[1.5rem] border border-white/10 bg-spillover-obsidian/60 px-6 py-5 shadow-[0_30px_100px_rgba(0,0,0,0.8)] backdrop-blur-2xl ring-1 ring-white/5">
+                  <div class="mb-3 flex items-center justify-between gap-3 text-[0.7rem] text-spillover-lightgray font-display uppercase tracking-widest font-semibold">
                     <div class="flex items-center gap-2 truncate">
-                      <span class="truncate text-red-500 font-bold">YouTube · Boiler Room</span>
-                    </div>
-                  </div>
-                  <div class="flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-3 min-w-0">
-                      <img
-                        src="https://i.ytimg.com/vi/5qap5aO4i9A/hqdefault.jpg"
-                        alt="Boiler Room set thumbnail"
-                        class="h-10 w-10 flex-shrink-0 rounded-lg object-cover ring-1 ring-white/10"
-                      />
-                      <div class="min-w-0">
-                        <p class="text-xs uppercase tracking-[0.22em] text-spotify-lightgray">
-                          Listening elsewhere
-                        </p>
-                        <p class="mt-1 truncate text-sm font-medium">
-                          Boiler Room · London (full set)
-                        </p>
-                        <p class="truncate text-xs text-spotify-lightgray">
-                          Streamed on YouTube · Not saved to Spotify yet
-                        </p>
-                      </div>
-                    </div>
-                    <div class="flex flex-col items-end gap-1">
-                      <div class="flex h-9 w-9 items-center justify-center rounded-full bg-red-500/20 text-red-400">
-                        <svg
-                          class="h-4 w-4"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                        >
-                          <path d="M10 9v6l5-3-5-3z" />
-                        </svg>
-                      </div>
-                      <span class="text-xs uppercase tracking-[0.16em] text-spotify-lightgray">
-                        Live now
+                      <span class="truncate text-red-500 flex items-center gap-1.5">
+                        <span class="h-1.5 w-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)] animate-pulse"></span>
+                        YouTube
                       </span>
                     </div>
                   </div>
-                </div>
-
-                <div class="space-y-3 pl-4 sm:pl-6">
-                  <div class="group relative flex items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.02] px-4 py-3 shadow-[0_22px_60px_rgba(0,0,0,0.85)] hover:border-emerald-400/40 hover:bg-white/[0.04] transition-all">
-                    <div class="flex-shrink-0 relative">
-                      <div class="w-12 h-12 rounded-xl bg-[conic-gradient(from_160deg,_#22c55e,_#22d3ee,_#a855f7,_#22c55e)] ring-1 ring-white/10 flex items-center justify-center">
-                        <svg
-                          class="h-4 w-4 text-black/80"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                        >
-                          <path d="M9 18V5l9-2v13.2A3.8 3.8 0 0 1 14.2 20 3.8 3.8 0 0 1 10.4 18.3 3.3 3.3 0 0 1 9 18Z" />
-                        </svg>
+                  <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-4 min-w-0">
+                      <div class="relative">
+                        <img
+                          src="https://i.ytimg.com/vi/5qap5aO4i9A/hqdefault.jpg"
+                          alt="Boiler Room set thumbnail"
+                          class="h-12 w-12 flex-shrink-0 rounded-xl object-cover ring-2 ring-white/10 shadow-lg"
+                        />
+                        <div class="absolute inset-0 rounded-xl ring-1 ring-inset ring-black/20 pointer-events-none"></div>
                       </div>
-                      <div class="pointer-events-none absolute inset-0 rounded-xl bg-black/55 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div class="flex h-full w-full items-center justify-center">
+                      <div class="min-w-0">
+                        <p class="text-[0.65rem] font-display uppercase tracking-[0.25em] text-spillover-cyan mb-1">
+                          Signal Detected
+                        </p>
+                        <p class="truncate text-sm font-semibold font-display tracking-wide text-spillover-white">
+                          Boiler Room · London (full set)
+                        </p>
+                        <p class="truncate text-xs text-spillover-lightgray mt-0.5 font-light">
+                          Streamed Active · Not captured
+                        </p>
+                      </div>
+                    </div>
+                    <div class="flex flex-col items-end gap-1.5">
+                      <div class="relative group cursor-pointer">
+                        <div class="absolute inset-0 bg-spillover-cyan/20 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/5 border border-white/10 text-spillover-cyan shadow-sm hover:bg-spillover-cyan hover:text-spillover-obsidian hover:border-spillover-cyan transition-all duration-300">
                           <svg
-                            class="h-5 w-5 text-white"
+                            class="h-4 w-4 ml-0.5"
                             viewBox="0 0 24 24"
                             fill="currentColor"
                           >
@@ -211,36 +193,50 @@ const initialUrl = Astro.url.searchParams.get("url") || "";
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
 
-                    <div class="min-w-0 flex-1">
-                      <p class="text-xs uppercase tracking-[0.2em] text-spotify-lightgray">
-                        Found On Spotify
+                <div class="space-y-4 pl-4 sm:pl-8 relative before:content-[''] before:absolute before:left-[1.85rem] sm:before:left-[2.85rem] before:top-[-1.5rem] before:w-px before:h-8 before:bg-gradient-to-b before:from-transparent before:to-white/20">
+                  <div class="group relative flex items-center gap-4 rounded-[1.2rem] border border-white/5 bg-gradient-to-br from-white/[0.04] to-transparent px-5 py-4 shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:border-spillover-cyan/40 hover:bg-white/[0.06] transition-all duration-300">
+                    <div class="flex-shrink-0 relative">
+                      <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-spillover-indigo to-spillover-cyan ring-1 ring-white/20 flex items-center justify-center shadow-lg">
+                        <svg
+                          class="h-5 w-5 text-spillover-obsidian"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path d="M9 18V5l9-2v13.2A3.8 3.8 0 0 1 14.2 20 3.8 3.8 0 0 1 10.4 18.3 3.3 3.3 0 0 1 9 18Z" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="min-w-0 flex-1 pl-1">
+                      <p class="text-[0.65rem] font-display uppercase tracking-[0.2em] text-spillover-lightgray mb-0.5">
+                        Captured to Library
                       </p>
-                      <p class="mt-1 truncate text-sm font-medium text-white">
+                      <p class="truncate text-sm font-semibold font-display text-spillover-white tracking-wide">
                         London 23/04/2025 (full set)
                       </p>
-                      <p class="truncate text-xs text-spotify-lightgray">
+                      <p class="truncate text-xs text-spillover-lightgray font-light">
                         Boilter Room
                       </p>
                     </div>
 
                     <div class="ml-3 flex flex-col items-end gap-2">
-                      <div class="flex flex-wrap justify-end gap-1">
-                        <span class="inline-flex items-center gap-1 rounded-full border border-white/15 px-2 py-0.5 text-xs uppercase tracking-[0.16em] text-spotify-lightgray">
-                          <span class="h-1.5 w-1.5 rounded-full bg-emerald-300" />
-                          Liked
-                        </span>
-                      </div>
+                       <span class="inline-flex items-center gap-1.5 rounded-full border border-spillover-cyan/30 bg-spillover-cyan/10 px-2.5 py-1 text-[0.65rem] uppercase font-semibold tracking-[0.16em] text-spillover-cyan shadow-[0_0_15px_rgba(0,240,255,0.1)]">
+                         <span class="h-1.5 w-1.5 rounded-full bg-spillover-cyan animate-pulse shadow-[0_0_5px_rgba(0,240,255,1)]" />
+                         Captured
+                       </span>
                     </div>
                   </div>
 
                   <a
                     href="/extension"
-                    class="group relative inline-flex items-center gap-3 rounded-2xl border border-dashed border-emerald-300/40 bg-black/30 px-4 py-3 text-xs text-spotify-lightgray backdrop-blur-xl"
+                    class="group relative inline-flex items-center gap-4 rounded-[1rem] border border-dashed border-white/20 bg-black/40 px-5 py-3.5 text-[0.8rem] text-spillover-lightgray backdrop-blur-md hover:border-spillover-indigo/50 hover:bg-black/60 transition-all duration-300 w-full"
                   >
-                    <span class="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-300/10 text-emerald-200">
+                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-spillover-indigo/20 text-spillover-indigo group-hover:bg-spillover-indigo group-hover:text-white transition-colors">
                       <svg
-                        class="h-3 w-3"
+                        class="h-4 w-4"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -253,14 +249,13 @@ const initialUrl = Astro.url.searchParams.get("url") || "";
                         />
                       </svg>
                     </span>
-                    <span class="flex-1">
+                    <span class="flex-1 font-light tracking-wide">
                       Right–click any text in Chrome and “Send to Spillover” to
-                      pre‑fill the search.
+                      pre‑fill capture.
                     </span>
-                    <span class="inline-flex items-center gap-1 text-[0.7rem] text-emerald-200 group-hover:translate-x-0.5 transition-transform">
-                      Install extension
+                    <span class="inline-flex items-center justify-center rounded-md bg-white/5 p-1.5 text-spillover-white/50 group-hover:bg-white/10 group-hover:text-spillover-white transition-all">
                       <svg
-                        class="h-3 w-3"
+                        class="h-4 w-4"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"

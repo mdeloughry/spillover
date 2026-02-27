@@ -19,12 +19,12 @@ const {
 } = Astro.props;
 ---
 
-<header class="relative border-b border-white/10 backdrop-blur-xl bg-gradient-to-r from-black/80 via-emerald-950/20 to-black/80">
+<header class="sticky top-0 z-50 border-b border-white/5 bg-spillover-obsidian/40 backdrop-blur-2xl transition-all duration-300">
   <!-- Subtle glow effect -->
-  <div class="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-transparent pointer-events-none"></div>
+  <div class="absolute inset-0 bg-gradient-to-b from-spillover-cyan/5 to-transparent pointer-events-none"></div>
 
   <div
-    class="relative max-w-5xl mx-auto px-4 py-4 lg:py-5 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+    class="relative max-w-5xl mx-auto px-4 py-3 lg:py-4 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
   >
     <a
       href="/"
@@ -32,43 +32,43 @@ const {
     >
       <!-- Logo container with glow -->
       <div
-        class="relative inline-flex h-11 w-11 lg:h-12 lg:w-12 items-center justify-center"
+        class="relative inline-flex h-10 w-10 lg:h-11 lg:w-11 items-center justify-center"
       >
         <!-- Glow ring -->
-        <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-400/20 to-emerald-600/10 blur-sm group-hover:from-emerald-400/30 group-hover:to-emerald-600/20 transition-all"></div>
+        <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-spillover-cyan/30 to-spillover-indigo/20 blur-md group-hover:from-spillover-cyan/50 group-hover:to-spillover-indigo/40 transition-all duration-500"></div>
         <!-- Logo background -->
-        <div class="relative flex items-center justify-center h-full w-full rounded-2xl bg-gradient-to-br from-emerald-950/80 to-black/60 border border-emerald-500/20 shadow-lg shadow-emerald-900/20">
+        <div class="relative flex items-center justify-center h-full w-full rounded-2xl bg-gradient-to-br from-spillover-obsidian to-black border border-white/10 shadow-lg shadow-black/50 group-hover:scale-105 transition-transform duration-300">
           <Logo />
         </div>
       </div>
 
       <div>
-        <div class="flex items-center gap-2">
-          <h1 class="text-lg lg:text-xl font-bold tracking-tight bg-gradient-to-r from-white via-white to-emerald-200 bg-clip-text text-transparent">
+        <div class="flex items-center gap-2.5">
+          <h1 class="text-lg lg:text-xl font-display font-bold tracking-wider text-spillover-white uppercase mt-0.5">
             Spillover
           </h1>
           <!-- Version badge -->
-          <span class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-full text-[0.6rem] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            beta
+          <span class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-[0.25rem] text-[0.55rem] uppercase font-bold tracking-widest bg-spillover-indigo/20 text-spillover-indigo border border-spillover-indigo/30 shadow-[0_0_10px_rgba(99,102,241,0.2)]">
+            engine beta
           </span>
         </div>
-        <p class="mt-0.5 text-[0.7rem] lg:text-xs text-spotify-lightgray/80 font-medium tracking-wide">
-          For people who listen everywhere
+        <p class="mt-0 text-[0.65rem] lg:text-[0.7rem] text-spillover-lightgray/60 font-medium tracking-[0.15em] uppercase">
+          Industry Standard Capture
         </p>
       </div>
     </a>
 
     {
       showAuthHeader ? (
-        <div class="w-full sm:w-auto flex items-center justify-end gap-3 lg:gap-4">
-          <span class="hidden text-[0.7rem] lg:text-xs text-spotify-lightgray/70 sm:inline font-medium">
+        <div class="w-full sm:w-auto flex items-center justify-end gap-3 lg:gap-5">
+          <span class="hidden text-[0.7rem] lg:text-[0.75rem] text-spillover-lightgray/70 sm:inline font-medium tracking-wide">
             {isAuthenticated ? (
-              <span class="flex items-center gap-1.5">
-                <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                Connected to Spotify
+              <span class="flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-spillover-cyan shadow-[0_0_8px_rgba(0,240,255,0.8)] animate-pulse"></span>
+                Engine Connected
               </span>
             ) : (
-              "Sign in with Spotify"
+              "Connect to Hub"
             )}
           </span>
           <AuthButton client:load isAuthenticated={isAuthenticated} />
