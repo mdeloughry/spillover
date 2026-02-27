@@ -76,14 +76,14 @@ export default function SidebarRecommendations({ currentTrack, onTrackSelect }: 
 
   return (
     <div className="w-full lg:w-72 flex-shrink-0">
-      <div className="sticky top-4 bg-spotify-gray/20 rounded-lg border border-spotify-gray/30 overflow-hidden">
-        <div className="flex items-center gap-2 px-4 py-3 border-b border-spotify-gray/30">
-          <svg className="w-4 h-4 text-spotify-green" fill="currentColor" viewBox="0 0 24 24">
+      <div className="sticky top-4 bg-spillover-obsidian/20 rounded-lg border border-spillover-obsidian/30 overflow-hidden">
+        <div className="flex items-center gap-2 px-4 py-3 border-b border-spillover-obsidian/30">
+          <svg className="w-4 h-4 text-spillover-cyan" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
           </svg>
           <h3 className="font-semibold text-white text-sm">You might like</h3>
           {isLoading && (
-            <div className="w-3 h-3 border-2 border-spotify-green border-t-transparent rounded-full animate-spin ml-auto" />
+            <div className="w-3 h-3 border-2 border-spillover-cyan border-t-transparent rounded-full animate-spin ml-auto" />
           )}
         </div>
 
@@ -94,7 +94,7 @@ export default function SidebarRecommendations({ currentTrack, onTrackSelect }: 
             return (
               <div
                 key={track.id}
-                className="flex items-center gap-3 px-4 py-2 hover:bg-spotify-gray/20 transition-colors group"
+                className="flex items-center gap-3 px-4 py-2 hover:bg-spillover-obsidian/20 transition-colors group"
               >
                 {albumImage && (
                   <img
@@ -112,7 +112,7 @@ export default function SidebarRecommendations({ currentTrack, onTrackSelect }: 
                   >
                     {track.name}
                   </a>
-                  <p className="text-xs text-spotify-lightgray truncate">
+                  <p className="text-xs text-spillover-lightgray truncate">
                     {track.artists.map((a) => a.name).join(', ')}
                   </p>
                 </div>
@@ -120,7 +120,7 @@ export default function SidebarRecommendations({ currentTrack, onTrackSelect }: 
                   <button
                     onClick={() => handleLike(track)}
                     className={`p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full transition-colors ${
-                      track.isLiked ? 'text-spotify-green opacity-100' : 'text-spotify-lightgray hover:text-white'
+                      track.isLiked ? 'text-spillover-cyan opacity-100' : 'text-spillover-lightgray hover:text-white'
                     }`}
                     title={track.isLiked ? 'Remove from Liked Songs' : 'Add to Liked Songs'}
                   >
@@ -141,7 +141,7 @@ export default function SidebarRecommendations({ currentTrack, onTrackSelect }: 
                   {onTrackSelect && (
                     <button
                       onClick={() => onTrackSelect(track)}
-                      className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full text-spotify-lightgray hover:text-white transition-colors"
+                      className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full text-spillover-lightgray hover:text-white transition-colors"
                       title="Add to Playlist"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,7 +156,7 @@ export default function SidebarRecommendations({ currentTrack, onTrackSelect }: 
         </div>
 
         {!isLoading && recommendations.length === 0 && (
-          <div className="px-4 py-6 text-center text-spotify-lightgray text-sm">
+          <div className="px-4 py-6 text-center text-spillover-lightgray text-sm">
             No recommendations
           </div>
         )}

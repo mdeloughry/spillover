@@ -143,9 +143,9 @@ export default function PlaylistSelector({ track, onClose, onAdd }: PlaylistSele
   };
 
   const getButtonStateClass = (isAdded: boolean, isDuplicate: boolean): string => {
-    if (isAdded) return 'bg-spotify-green/10 cursor-default';
+    if (isAdded) return 'bg-spillover-cyan/10 cursor-default';
     if (isDuplicate) return 'bg-amber-500/5 hover:bg-amber-500/10';
-    return 'hover:bg-spotify-gray/20';
+    return 'hover:bg-spillover-obsidian/20';
   };
 
   return (
@@ -159,19 +159,19 @@ export default function PlaylistSelector({ track, onClose, onAdd }: PlaylistSele
     >
       <div
         ref={dialogRef}
-        className="bg-spotify-black border border-spotify-gray/30 rounded-lg w-full max-w-md max-h-[80vh] flex flex-col"
+        className="bg-spillover-obsidian border border-spillover-obsidian/30 rounded-lg w-full max-w-md max-h-[80vh] flex flex-col"
       >
         {/* Header */}
-        <div className="p-4 border-b border-spotify-gray/30">
+        <div className="p-4 border-b border-spillover-obsidian/30">
           <div className="flex items-center justify-between mb-3">
             <div>
               <h2 id="playlist-dialog-title" className="font-bold text-white">Add to playlist</h2>
-              <p id="playlist-dialog-description" className="text-sm text-spotify-lightgray truncate">{track.name}</p>
+              <p id="playlist-dialog-description" className="text-sm text-spillover-lightgray truncate">{track.name}</p>
             </div>
             <button
               ref={closeButtonRef}
               onClick={onClose}
-              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-spotify-lightgray hover:text-white transition-colors"
+              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-spillover-lightgray hover:text-white transition-colors"
               aria-label="Close dialog"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -193,11 +193,11 @@ export default function PlaylistSelector({ track, onClose, onAdd }: PlaylistSele
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search playlists..."
-                className="w-full px-3 py-2 pl-9 text-sm bg-spotify-gray/30 border border-spotify-gray/50 rounded-lg text-white placeholder-spotify-lightgray/60 focus:outline-none focus:border-spotify-green/50 focus:ring-1 focus:ring-spotify-green/20"
+                className="w-full px-3 py-2 pl-9 text-sm bg-spillover-obsidian/30 border border-spillover-obsidian/50 rounded-lg text-white placeholder-spillover-lightgray/60 focus:outline-none focus:border-spillover-cyan/50 focus:ring-1 focus:ring-spillover-cyan/20"
                 aria-label="Search playlists"
               />
               <svg
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-spotify-lightgray/60"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-spillover-lightgray/60"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -214,7 +214,7 @@ export default function PlaylistSelector({ track, onClose, onAdd }: PlaylistSele
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-spotify-lightgray/60 hover:text-white"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-spillover-lightgray/60 hover:text-white"
                   aria-label="Clear search"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,7 +230,7 @@ export default function PlaylistSelector({ track, onClose, onAdd }: PlaylistSele
         <div className="overflow-y-auto flex-grow">
           {isLoading ? (
             <div className="flex items-center justify-center py-12" role="status" aria-label="Loading playlists">
-              <div className="w-8 h-8 border-2 border-spotify-green border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+              <div className="w-8 h-8 border-2 border-spillover-cyan border-t-transparent rounded-full animate-spin" aria-hidden="true" />
               <span className="sr-only">Loading playlists...</span>
             </div>
           ) : error ? (
@@ -238,15 +238,15 @@ export default function PlaylistSelector({ track, onClose, onAdd }: PlaylistSele
               <p>{error}</p>
             </div>
           ) : playlists.length === 0 ? (
-            <div className="text-center py-12 text-spotify-lightgray" role="status">
+            <div className="text-center py-12 text-spillover-lightgray" role="status">
               <p>No playlists found</p>
             </div>
           ) : filteredPlaylists.length === 0 ? (
-            <div className="text-center py-8 text-spotify-lightgray" role="status">
+            <div className="text-center py-8 text-spillover-lightgray" role="status">
               <p className="text-sm">No playlists match "{searchQuery}"</p>
               <button
                 onClick={() => setSearchQuery('')}
-                className="mt-2 text-xs text-spotify-green hover:underline"
+                className="mt-2 text-xs text-spillover-cyan hover:underline"
               >
                 Clear search
               </button>
@@ -278,9 +278,9 @@ export default function PlaylistSelector({ track, onClose, onAdd }: PlaylistSele
                             aria-hidden="true"
                           />
                         ) : (
-                          <div className="w-10 h-10 rounded bg-spotify-gray flex items-center justify-center" aria-hidden="true">
+                          <div className="w-10 h-10 rounded bg-spillover-obsidian flex items-center justify-center" aria-hidden="true">
                             <svg
-                              className="w-5 h-5 text-spotify-lightgray"
+                              className="w-5 h-5 text-spillover-lightgray"
                               fill="currentColor"
                               viewBox="0 0 24 24"
                               aria-hidden="true"
@@ -305,7 +305,7 @@ export default function PlaylistSelector({ track, onClose, onAdd }: PlaylistSele
                       {/* Playlist Info */}
                       <div className="flex-grow text-left min-w-0">
                         <p className="font-medium text-white truncate">{playlist.name}</p>
-                        <p className="text-sm text-spotify-lightgray">
+                        <p className="text-sm text-spillover-lightgray">
                           {playlist.tracks.total} tracks
                           {isDuplicate && !isAdded && (
                             <span className="text-amber-400 ml-1">· already added</span>
@@ -315,10 +315,10 @@ export default function PlaylistSelector({ track, onClose, onAdd }: PlaylistSele
 
                       {/* Status */}
                       {isAdding ? (
-                        <div className="w-5 h-5 border-2 border-spotify-green border-t-transparent rounded-full animate-spin" aria-hidden="true" />
+                        <div className="w-5 h-5 border-2 border-spillover-cyan border-t-transparent rounded-full animate-spin" aria-hidden="true" />
                       ) : isAdded ? (
                         <svg
-                          className="w-5 h-5 text-spotify-green"
+                          className="w-5 h-5 text-spillover-cyan"
                           fill="currentColor"
                           viewBox="0 0 24 24"
                           aria-hidden="true"

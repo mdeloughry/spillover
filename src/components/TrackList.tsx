@@ -57,7 +57,7 @@ export default function TrackList({
 
   if (tracks.length === 0) {
     return (
-      <div className="text-center py-12 text-spotify-lightgray" role="status">
+      <div className="text-center py-12 text-spillover-lightgray" role="status">
         <svg
           className="w-16 h-16 mx-auto mb-4 opacity-50"
           fill="none"
@@ -102,7 +102,7 @@ export default function TrackList({
       {/* Like All Button */}
       {onLikeAll && hasUnlikedTracks && (
         <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/10">
-          <span className="text-sm text-spotify-lightgray">
+          <span className="text-sm text-spillover-lightgray">
             {tracks.length} tracks · {unlikedTracks.length} not liked
           </span>
           <button
@@ -110,8 +110,8 @@ export default function TrackList({
             disabled={isLikingAll}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
               likeAllSuccess
-                ? 'bg-spotify-green text-black'
-                : 'bg-spotify-green/10 text-spotify-green hover:bg-spotify-green/20 border border-spotify-green/30'
+                ? 'bg-spillover-cyan text-black'
+                : 'bg-spillover-cyan/10 text-spillover-cyan hover:bg-spillover-cyan/20 border border-spillover-cyan/30'
             } disabled:opacity-50`}
             aria-label={`Like all ${unlikedTracks.length} unliked tracks`}
           >

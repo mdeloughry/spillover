@@ -32,18 +32,18 @@ export default function AnalyticsOptOut() {
   // Don't render until we know the state
   if (optedOut === null) {
     return (
-      <div className="bg-spotify-gray/10 rounded-lg p-4 border border-spotify-gray/20">
-        <div className="h-6 w-32 bg-spotify-gray/20 rounded animate-pulse" />
+      <div className="bg-spillover-obsidian/10 rounded-lg p-4 border border-spillover-obsidian/20">
+        <div className="h-6 w-32 bg-spillover-obsidian/20 rounded animate-pulse" />
       </div>
     );
   }
 
   return (
-    <div className="bg-spotify-gray/10 rounded-lg p-4 border border-spotify-gray/20">
+    <div className="bg-spillover-obsidian/10 rounded-lg p-4 border border-spillover-obsidian/20">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-white font-medium text-sm">Analytics & Error Tracking</p>
-          <p className="text-spotify-lightgray text-xs mt-1">
+          <p className="text-spillover-lightgray text-xs mt-1">
             {optedOut
               ? "Analytics and error tracking are disabled. No data is being collected."
               : "Help improve Spillover with anonymous usage data and error reports."}
@@ -51,8 +51,8 @@ export default function AnalyticsOptOut() {
         </div>
         <button
           onClick={handleToggle}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-spotify-green focus:ring-offset-2 focus:ring-offset-spotify-black ${
-            optedOut ? 'bg-spotify-gray/50' : 'bg-spotify-green'
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-spillover-cyan focus:ring-offset-2 focus:ring-offset-spillover-obsidian ${
+            optedOut ? 'bg-spillover-obsidian/50' : 'bg-spillover-cyan'
           }`}
           role="switch"
           aria-checked={!optedOut}

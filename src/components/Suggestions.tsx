@@ -79,22 +79,22 @@ export default function Suggestions({
   if (seedTrackIds.length === 0) return null;
 
   return (
-    <div className="mt-8 bg-gradient-to-r from-spotify-green/10 to-transparent rounded-lg border border-spotify-green/20 overflow-hidden">
+    <div className="mt-8 bg-gradient-to-r from-spillover-cyan/10 to-transparent rounded-lg border border-spillover-cyan/20 overflow-hidden">
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-spotify-green/5 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-spillover-cyan/5 transition-colors"
       >
         <div className="flex items-center gap-2">
-          <svg className="w-5 h-5 text-spotify-green" fill="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-spillover-cyan" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
           </svg>
           <span className="font-semibold text-white">You might also like</span>
           {isLoading && (
-            <div className="w-4 h-4 border-2 border-spotify-green border-t-transparent rounded-full animate-spin" />
+            <div className="w-4 h-4 border-2 border-spillover-cyan border-t-transparent rounded-full animate-spin" />
           )}
         </div>
         <svg
-          className={`w-5 h-5 text-spotify-lightgray transition-transform ${isCollapsed ? '' : 'rotate-180'}`}
+          className={`w-5 h-5 text-spillover-lightgray transition-transform ${isCollapsed ? '' : 'rotate-180'}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -110,7 +110,7 @@ export default function Suggestions({
           )}
 
           {!isLoading && !error && tracks.length === 0 && (
-            <p className="text-spotify-lightgray text-sm py-2">No suggestions available</p>
+            <p className="text-spillover-lightgray text-sm py-2">No suggestions available</p>
           )}
 
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -120,7 +120,7 @@ export default function Suggestions({
               return (
                 <div
                   key={track.id}
-                  className="group bg-spotify-gray/20 rounded-lg p-3 hover:bg-spotify-gray/30 transition-colors"
+                  className="group bg-spillover-obsidian/20 rounded-lg p-3 hover:bg-spillover-obsidian/30 transition-colors"
                 >
                   {/* Album art */}
                   <div className="mb-3">
@@ -131,8 +131,8 @@ export default function Suggestions({
                         className="w-full aspect-square rounded shadow-lg"
                       />
                     ) : (
-                      <div className="w-full aspect-square rounded bg-spotify-gray flex items-center justify-center">
-                        <svg className="w-8 h-8 text-spotify-lightgray" fill="currentColor" viewBox="0 0 24 24">
+                      <div className="w-full aspect-square rounded bg-spillover-obsidian flex items-center justify-center">
+                        <svg className="w-8 h-8 text-spillover-lightgray" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
                         </svg>
                       </div>
@@ -148,7 +148,7 @@ export default function Suggestions({
                   >
                     {track.name}
                   </a>
-                  <p className="text-xs text-spotify-lightgray truncate">
+                  <p className="text-xs text-spillover-lightgray truncate">
                     {track.artists.map((a) => a.name).join(', ')}
                   </p>
 
@@ -158,8 +158,8 @@ export default function Suggestions({
                       onClick={() => handleLike(track)}
                       className={`p-1.5 rounded-full transition-colors ${
                         track.isLiked
-                          ? 'text-spotify-green'
-                          : 'text-spotify-lightgray hover:text-white'
+                          ? 'text-spillover-cyan'
+                          : 'text-spillover-lightgray hover:text-white'
                       }`}
                     >
                       <svg
@@ -178,13 +178,13 @@ export default function Suggestions({
                     </button>
                     <button
                       onClick={() => onAddToPlaylist(track)}
-                      className="p-1.5 rounded-full text-spotify-lightgray hover:text-white transition-colors"
+                      className="p-1.5 rounded-full text-spillover-lightgray hover:text-white transition-colors"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                       </svg>
                     </button>
-                    <span className="text-xs text-spotify-lightgray ml-auto">
+                    <span className="text-xs text-spillover-lightgray ml-auto">
                       {formatDuration(track.duration_ms)}
                     </span>
                   </div>

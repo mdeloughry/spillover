@@ -112,7 +112,7 @@ export default function TrackCard({
   };
 
   return (
-    <div className="group relative w-full max-w-full overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] shadow-[0_18px_60px_rgba(0,0,0,0.7)] hover:border-emerald-400/40 hover:bg-white/[0.04] transition-all">
+    <div className="group relative w-full max-w-full overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] shadow-[0_18px_60px_rgba(0,0,0,0.7)] hover:border-spillover-cyan/40 hover:bg-white/[0.04] transition-all">
       <div className="flex items-center gap-4 px-4 py-3 w-full min-w-0">
         {/* Album Art */}
         <div className="flex-shrink-0">
@@ -123,8 +123,8 @@ export default function TrackCard({
               className="w-14 h-14 rounded-xl shadow-md ring-1 ring-white/10"
             />
           ) : (
-            <div className="w-14 h-14 rounded-xl shadow-md bg-gradient-to-br from-emerald-500 via-emerald-400 to-sky-400 flex items-center justify-center ring-1 ring-white/10">
-              <svg className="w-6 h-6 text-spotify-lightgray" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <div className="w-14 h-14 rounded-xl shadow-md bg-gradient-to-br from-spillover-cyan/50 via-spillover-indigo/50 to-purple-500/50 flex items-center justify-center ring-1 ring-white/10">
+              <svg className="w-6 h-6 text-spillover-lightgray" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
               </svg>
             </div>
@@ -137,27 +137,27 @@ export default function TrackCard({
             href={track.external_urls.spotify}
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-sm font-medium text-white hover:text-emerald-200"
+            className="block text-sm font-medium text-white hover:text-spillover-cyan"
             aria-label={`${track.name} (opens in Spotify)`}
           >
             <TruncatedText text={track.name} className="text-sm font-medium" />
             <span className="sr-only"> (opens in new tab)</span>
           </a>
-          <TruncatedText text={artists} className="text-xs text-spotify-lightgray" />
-          <TruncatedText text={track.album.name} className="mt-1 text-xs text-spotify-lightgray/70" />
+          <TruncatedText text={artists} className="text-xs text-spillover-lightgray" />
+          <TruncatedText text={track.album.name} className="mt-1 text-xs text-spillover-lightgray/70" />
         </div>
 
         {/* Meta + Actions */}
         <div className="ml-4 flex flex-col items-end gap-2 flex-shrink-0">
           {/* Duration */}
-          <span className="hidden text-xs text-spotify-lightgray sm:block">
+          <span className="hidden text-xs text-spillover-lightgray sm:block">
             {formatDuration(track.duration_ms)}
           </span>
 
           {/* Status pills */}
           {isLiked && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-white/15 px-2 py-0.5 text-[0.6rem] sm:text-xs uppercase tracking-[0.16em] text-spotify-lightgray">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1 rounded-full border border-white/15 px-2 py-0.5 text-[0.6rem] sm:text-xs uppercase tracking-[0.16em] text-spillover-lightgray">
+              <span className="h-1.5 w-1.5 rounded-full bg-spillover-cyan" aria-hidden="true" />
               Liked
             </span>
           )}
@@ -165,23 +165,21 @@ export default function TrackCard({
           {/* Confidence badge - shown for imported tracks */}
           {track.confidence && (
             <span
-              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.6rem] sm:text-xs uppercase tracking-[0.16em] ${
-                track.confidence.level === 'high'
-                  ? 'border-emerald-500/30 text-emerald-400 bg-emerald-500/10'
+              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.6rem] sm:text-xs uppercase tracking-[0.16em] ${track.confidence.level === 'high'
+                  ? 'border-spillover-cyan/30 text-spillover-cyan bg-spillover-cyan/10'
                   : track.confidence.level === 'medium'
-                  ? 'border-amber-500/30 text-amber-400 bg-amber-500/10'
-                  : 'border-red-500/30 text-red-400 bg-red-500/10'
-              }`}
+                    ? 'border-spillover-indigo/30 text-spillover-indigo bg-spillover-indigo/10'
+                    : 'border-red-500/30 text-red-400 bg-red-500/10'
+                }`}
               title={`Match confidence: ${track.confidence.score}% (Title: ${track.confidence.titleScore}%, Artist: ${track.confidence.artistScore}%)`}
             >
               <span
-                className={`h-1.5 w-1.5 rounded-full ${
-                  track.confidence.level === 'high'
-                    ? 'bg-emerald-400'
+                className={`h-1.5 w-1.5 rounded-full ${track.confidence.level === 'high'
+                    ? 'bg-spillover-cyan'
                     : track.confidence.level === 'medium'
-                    ? 'bg-amber-400'
-                    : 'bg-red-400'
-                }`}
+                      ? 'bg-spillover-indigo'
+                      : 'bg-red-400'
+                  }`}
                 aria-hidden="true"
               />
               {track.confidence.score}% match
@@ -195,8 +193,8 @@ export default function TrackCard({
               onClick={handleLikeClick}
               disabled={isLikeLoading}
               className={`p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 rounded-full transition-all flex items-center justify-center ${isLiked
-                ? 'text-spotify-green hover:text-spotify-green/80 scale-100'
-                : 'text-spotify-lightgray hover:text-white opacity-70 group-hover:opacity-100'
+                ? 'text-spillover-cyan hover:text-spillover-cyan/80 scale-100'
+                : 'text-spillover-lightgray hover:text-white opacity-70 group-hover:opacity-100'
                 } disabled:opacity-50`}
               aria-label={isLiked ? `Remove ${track.name} from Liked Songs` : `Save ${track.name} to Liked Songs`}
               aria-pressed={isLiked}
@@ -226,7 +224,7 @@ export default function TrackCard({
             {/* Add to Playlist Button */}
             <button
               onClick={() => onAddToPlaylist(track)}
-              className="p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 rounded-full text-spotify-lightgray hover:text-white transition-colors flex items-center justify-center"
+              className="p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 rounded-full text-spillover-lightgray hover:text-white transition-colors flex items-center justify-center"
               aria-label={`Add ${track.name} to playlist`}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -244,13 +242,12 @@ export default function TrackCard({
               <button
                 onClick={handleAddToQueue}
                 disabled={isQueueLoading}
-                className={`p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 rounded-full transition-colors flex items-center justify-center ${
-                  queueSuccess
-                    ? 'text-spotify-green'
+                className={`p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 rounded-full transition-colors flex items-center justify-center ${queueSuccess
+                    ? 'text-spillover-cyan'
                     : queueError
-                    ? 'text-red-400'
-                    : 'text-spotify-lightgray hover:text-white'
-                } disabled:opacity-50`}
+                      ? 'text-red-400'
+                      : 'text-spillover-lightgray hover:text-white'
+                  } disabled:opacity-50`}
                 aria-label={`Add ${track.name} to queue`}
                 title="Add to queue"
               >
@@ -275,7 +272,7 @@ export default function TrackCard({
               <button
                 onClick={handlePlayNow}
                 disabled={isPlayLoading}
-                className="p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 rounded-full text-spotify-lightgray hover:text-spotify-green transition-colors flex items-center justify-center disabled:opacity-50"
+                className="p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 rounded-full text-spillover-lightgray hover:text-spillover-cyan transition-colors flex items-center justify-center disabled:opacity-50"
                 aria-label={`Play ${track.name} now on Spotify`}
                 title="Play now on Spotify"
               >
@@ -294,7 +291,7 @@ export default function TrackCard({
             {/* Share Button */}
             <button
               onClick={handleShareClick}
-              className="p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 rounded-full text-spotify-lightgray hover:text-white transition-colors flex items-center justify-center"
+              className="p-2.5 sm:p-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 rounded-full text-spillover-lightgray hover:text-white transition-colors flex items-center justify-center"
               aria-label={`Share ${track.name}`}
               title="Share track"
             >

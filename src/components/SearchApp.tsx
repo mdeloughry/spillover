@@ -417,13 +417,13 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
           <div
             role="listbox"
             aria-label="Recent searches"
-            className="absolute top-full left-0 right-0 mt-2 bg-spotify-gray/95 backdrop-blur-lg rounded-lg shadow-xl border border-spotify-gray/50 max-w-2xl mx-auto overflow-hidden z-40"
+            className="absolute top-full left-0 right-0 mt-2 bg-spillover-obsidian/95 backdrop-blur-lg rounded-lg shadow-xl border border-spillover-obsidian/50 max-w-2xl mx-auto overflow-hidden z-40"
           >
-            <div className="flex items-center justify-between px-4 py-2 border-b border-spotify-gray/50">
-              <span id="search-history-label" className="text-xs text-spotify-lightgray">Recent searches</span>
+            <div className="flex items-center justify-between px-4 py-2 border-b border-spillover-obsidian/50">
+              <span id="search-history-label" className="text-xs text-spillover-lightgray">Recent searches</span>
               <button
                 onClick={clearSearchHistory}
-                className="text-xs text-spotify-lightgray hover:text-white"
+                className="text-xs text-spillover-lightgray hover:text-white"
                 aria-label="Clear search history"
               >
                 Clear
@@ -435,9 +435,9 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
                 role="option"
                 aria-selected="false"
                 onClick={() => handleSearch(query)}
-                className="w-full px-4 py-2 text-left text-white hover:bg-spotify-green/20 flex items-center gap-3"
+                className="w-full px-4 py-2 text-left text-white hover:bg-spillover-cyan/20 flex items-center gap-3"
               >
-                <svg className="w-4 h-4 text-spotify-lightgray" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg className="w-4 h-4 text-spillover-lightgray" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 {query}
@@ -448,9 +448,9 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
       </div>
 
       {/* Keyboard shortcuts hint */}
-      <div className="hidden sm:flex justify-center gap-4 text-xs text-spotify-lightgray/85">
-        <span><kbd className="px-1.5 py-0.5 bg-spotify-gray/50 rounded text-[0.7rem]">/</kbd> Search</span>
-        <span><kbd className="px-1.5 py-0.5 bg-spotify-gray/50 rounded text-[0.7rem]">L</kbd> Like first</span>
+      <div className="hidden sm:flex justify-center gap-4 text-xs text-spillover-lightgray/85">
+        <span><kbd className="px-1.5 py-0.5 bg-spillover-obsidian/50 rounded text-[0.7rem]">/</kbd> Search</span>
+        <span><kbd className="px-1.5 py-0.5 bg-spillover-obsidian/50 rounded text-[0.7rem]">L</kbd> Like first</span>
       </div>
 
       {error && (
@@ -465,25 +465,25 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
 
       {/* Playlist Import indicator */}
       {playlistImport && !error && (
-        <div className="bg-spotify-green/10 border border-spotify-green/20 rounded-lg p-4">
+        <div className="bg-spillover-cyan/10 border border-spillover-cyan/20 rounded-lg p-4">
           <div className="flex items-center gap-2 text-sm">
-            <svg className="w-5 h-5 text-spotify-green" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <svg className="w-5 h-5 text-spillover-cyan" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z" />
             </svg>
             <span className="font-medium text-white">
               Playlist imported from {PLATFORM_NAMES[playlistImport.platform] || playlistImport.platform}
             </span>
           </div>
-          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-spotify-lightgray">
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-spillover-lightgray">
             <span className="flex items-center gap-1">
-              <span className="text-spotify-green font-medium">{playlistImport.summary.found}</span> found
+              <span className="text-spillover-cyan font-medium">{playlistImport.summary.found}</span> found
             </span>
             {playlistImport.summary.notFound > 0 && (
               <span className="flex items-center gap-1">
                 <span className="text-amber-400 font-medium">{playlistImport.summary.notFound}</span> not found
               </span>
             )}
-            <span className="text-spotify-lightgray/60">
+            <span className="text-spillover-lightgray/60">
               ({playlistImport.summary.total} total)
             </span>
           </div>
@@ -491,25 +491,25 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
           {playlistImport.summary.confidence && playlistImport.summary.confidence.avgScore > 0 && (
             <div className="mt-3 pt-3 border-t border-white/10">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                <span className="text-spotify-lightgray">Match quality:</span>
+                <span className="text-spillover-lightgray">Match quality:</span>
                 <span className="flex items-center gap-1">
                   <span className="h-2 w-2 rounded-full bg-emerald-400" aria-hidden="true" />
                   <span className="text-emerald-400 font-medium">{playlistImport.summary.confidence.high}</span>
-                  <span className="text-spotify-lightgray/70">high</span>
+                  <span className="text-spillover-lightgray/70">high</span>
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="h-2 w-2 rounded-full bg-amber-400" aria-hidden="true" />
                   <span className="text-amber-400 font-medium">{playlistImport.summary.confidence.medium}</span>
-                  <span className="text-spotify-lightgray/70">medium</span>
+                  <span className="text-spillover-lightgray/70">medium</span>
                 </span>
                 {playlistImport.summary.confidence.low > 0 && (
                   <span className="flex items-center gap-1">
                     <span className="h-2 w-2 rounded-full bg-red-400" aria-hidden="true" />
                     <span className="text-red-400 font-medium">{playlistImport.summary.confidence.low}</span>
-                    <span className="text-spotify-lightgray/70">low</span>
+                    <span className="text-spillover-lightgray/70">low</span>
                   </span>
                 )}
-                <span className="text-spotify-lightgray/60">
+                <span className="text-spillover-lightgray/60">
                   (avg: {playlistImport.summary.confidence.avgScore}%)
                 </span>
               </div>
@@ -520,8 +520,8 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
 
       {/* URL Import indicator (single track) */}
       {urlImportSource && !playlistImport && !error && (
-        <div className="flex items-center justify-center gap-2 text-sm text-spotify-lightgray">
-          <svg className="w-4 h-4 text-spotify-green" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <div className="flex items-center justify-center gap-2 text-sm text-spillover-lightgray">
+          <svg className="w-4 h-4 text-spillover-cyan" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
           </svg>
           <span>Imported from {PLATFORM_NAMES[urlImportSource] || urlImportSource}</span>
@@ -531,12 +531,12 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
       {/* Search suggestions ("Did you mean?") */}
       {searchSuggestions.length > 0 && !isLoading && (
         <div className="flex flex-wrap items-center justify-center gap-2 text-sm">
-          <span className="text-spotify-lightgray">Try:</span>
+          <span className="text-spillover-lightgray">Try:</span>
           {searchSuggestions.map((suggestion, index) => (
             <button
               key={index}
               onClick={() => handleSearch(suggestion)}
-              className="px-3 py-1 rounded-full bg-spotify-gray/30 text-white hover:bg-spotify-green/20 hover:text-spotify-green transition-colors border border-white/10"
+              className="px-3 py-1 rounded-full bg-spillover-obsidian/30 text-white hover:bg-spillover-cyan/20 hover:text-spillover-cyan transition-colors border border-white/10"
             >
               {suggestion}
             </button>
@@ -569,12 +569,12 @@ export default function SearchApp({ initialQuery }: SearchAppProps) {
               )}
 
               {!hasSearched && (
-                <div className="text-center py-12 text-spotify-lightgray">
+                <div className="text-center py-12 text-spillover-lightgray">
                   <p>Search for a track to get started</p>
                   <p className="text-sm mt-2">
-                    Press <kbd className="px-1.5 py-0.5 bg-spotify-gray/50 rounded">/</kbd> to focus search
+                    Press <kbd className="px-1.5 py-0.5 bg-spillover-obsidian/50 rounded">/</kbd> to focus search
                   </p>
-                  <p className="text-sm mt-4 text-spotify-lightgray/60">
+                  <p className="text-sm mt-4 text-spillover-lightgray/60">
                     Tip: Paste a YouTube, SoundCloud, Spotify, or most other music links to find them on
                     Spotify
                   </p>

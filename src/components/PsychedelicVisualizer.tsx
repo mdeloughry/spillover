@@ -65,14 +65,14 @@ export default function PsychedelicVisualizer({ audioElement, onClose }: Psyched
       }
     }
 
-    // Demoscene colors
+    // Premium Spillover colors
     const colors = [
-      new THREE.Color(0x00ffff), // Cyan
-      new THREE.Color(0xff00ff), // Magenta
-      new THREE.Color(0xff6600), // Orange
-      new THREE.Color(0x00ff66), // Green
-      new THREE.Color(0x6600ff), // Purple
-      new THREE.Color(0xffff00), // Yellow
+      new THREE.Color(0x00F0FF), // Vivid Cyan 
+      new THREE.Color(0x6366F1), // Electric Indigo
+      new THREE.Color(0x8B5CF6), // Deep Violet
+      new THREE.Color(0x06B6D4), // Muted Cyan
+      new THREE.Color(0x3B82F6), // Ocean Blue
+      new THREE.Color(0x10B981), // Emerald Accent
     ];
 
     // Create morphing blob geometry
@@ -258,9 +258,9 @@ export default function PsychedelicVisualizer({ audioElement, onClose }: Psyched
 
         // Split frequency data into bass, mid, treble
         const third = Math.floor(data.length / 3);
-        bass = Array.from(data.slice(0, third)).reduce((a, b) => a + b, 0) / (third * 255);
-        mid = Array.from(data.slice(third, third * 2)).reduce((a, b) => a + b, 0) / (third * 255);
-        treble = Array.from(data.slice(third * 2)).reduce((a, b) => a + b, 0) / (third * 255);
+        bass = (Array.from(data.slice(0, third)) as number[]).reduce((a, b) => a + b, 0) / (third * 255);
+        mid = (Array.from(data.slice(third, third * 2)) as number[]).reduce((a, b) => a + b, 0) / (third * 255);
+        treble = (Array.from(data.slice(third * 2)) as number[]).reduce((a, b) => a + b, 0) / (third * 255);
       } else {
         // Fake audio response for demo
         bass = 0.5 + Math.sin(time * 2) * 0.3;

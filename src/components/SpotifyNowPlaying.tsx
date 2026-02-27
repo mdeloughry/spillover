@@ -150,7 +150,7 @@ export default function SpotifyNowPlaying({ onTrackSelect, onTrackChange }: Spot
   const progressPercent = Math.min((progress / duration) * 100, 100);
 
   return (
-    <div className="bg-gradient-to-r from-spotify-green/20 via-spotify-green/10 to-transparent rounded-xl border border-spotify-green/30">
+    <div className="bg-gradient-to-r from-spillover-cyan/20 via-spillover-cyan/10 to-transparent rounded-xl border border-spillover-cyan/30">
       <div className="px-4 py-3">
         <div className="flex items-center gap-3 sm:gap-4">
           {/* Album Art */}
@@ -163,7 +163,7 @@ export default function SpotifyNowPlaying({ onTrackSelect, onTrackChange }: Spot
               />
             )}
             {nowPlaying.is_playing && (
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-spotify-green rounded-full flex items-center justify-center" aria-hidden="true">
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-spillover-cyan rounded-full flex items-center justify-center" aria-hidden="true">
                 <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-black" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M8 5v14l11-7z" />
                 </svg>
@@ -175,7 +175,7 @@ export default function SpotifyNowPlaying({ onTrackSelect, onTrackChange }: Spot
           <div className="flex-1 min-w-0">
             <span
               onClick={handleNowPlayingClick}
-              className="text-[0.65rem] sm:text-xs text-spotify-green font-medium uppercase tracking-wider cursor-pointer hover:text-spotify-green/80 transition-colors select-none"
+              className="text-[0.65rem] sm:text-xs text-spillover-cyan font-medium uppercase tracking-wider cursor-pointer hover:text-spillover-cyan/80 transition-colors select-none"
               title="Click me..."
             >
               {nowPlaying.is_playing ? 'Now Playing on Spotify' : 'Paused on Spotify'}
@@ -190,7 +190,7 @@ export default function SpotifyNowPlaying({ onTrackSelect, onTrackChange }: Spot
               {track.name}
               <span className="sr-only"> (opens in new tab)</span>
             </a>
-            <p className="text-xs sm:text-sm text-spotify-lightgray truncate">
+            <p className="text-xs sm:text-sm text-spillover-lightgray truncate">
               {formatArtists(track.artists)}
             </p>
           </div>
@@ -200,8 +200,8 @@ export default function SpotifyNowPlaying({ onTrackSelect, onTrackChange }: Spot
             <button
               onClick={handleLike}
               className={`p-1.5 sm:p-2 rounded-full transition-colors ${isLiked
-                  ? 'text-spotify-green'
-                  : 'text-spotify-lightgray hover:text-white'
+                  ? 'text-spillover-cyan'
+                  : 'text-spillover-lightgray hover:text-white'
                 }`}
               title={isLiked ? 'Remove from Liked Songs' : 'Add to Liked Songs'}
               aria-label={isLiked ? `Remove ${track.name} from Liked Songs` : `Save ${track.name} to Liked Songs`}
@@ -225,7 +225,7 @@ export default function SpotifyNowPlaying({ onTrackSelect, onTrackChange }: Spot
             {onTrackSelect && (
               <button
                 onClick={() => onTrackSelect(track)}
-                className="p-1.5 sm:p-2 rounded-full text-spotify-lightgray hover:text-white transition-colors"
+                className="p-1.5 sm:p-2 rounded-full text-spillover-lightgray hover:text-white transition-colors"
                 title="Add to Playlist"
                 aria-label={`Add ${track.name} to playlist`}
               >
@@ -236,7 +236,7 @@ export default function SpotifyNowPlaying({ onTrackSelect, onTrackChange }: Spot
             )}
             <button
               onClick={handleShare}
-              className="p-1.5 sm:p-2 rounded-full text-spotify-lightgray hover:text-white transition-colors"
+              className="p-1.5 sm:p-2 rounded-full text-spillover-lightgray hover:text-white transition-colors"
               title="Share track"
               aria-label={`Share ${track.name}`}
             >
@@ -254,7 +254,7 @@ export default function SpotifyNowPlaying({ onTrackSelect, onTrackChange }: Spot
 
         {/* Progress Bar - Full width below main content */}
         <div className="flex items-center gap-2 mt-3 px-1">
-          <span className="text-[0.65rem] sm:text-xs text-spotify-lightgray tabular-nums flex-shrink-0" aria-hidden="true">
+          <span className="text-[0.65rem] sm:text-xs text-spillover-lightgray tabular-nums flex-shrink-0" aria-hidden="true">
             {formatDuration(progress)}
           </span>
           <div
@@ -267,11 +267,11 @@ export default function SpotifyNowPlaying({ onTrackSelect, onTrackChange }: Spot
             className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden"
           >
             <div
-              className="h-full bg-spotify-green transition-all duration-1000 ease-linear"
+              className="h-full bg-spillover-cyan transition-all duration-1000 ease-linear"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <span className="text-[0.65rem] sm:text-xs text-spotify-lightgray tabular-nums flex-shrink-0" aria-hidden="true">
+          <span className="text-[0.65rem] sm:text-xs text-spillover-lightgray tabular-nums flex-shrink-0" aria-hidden="true">
             {formatDuration(duration)}
           </span>
         </div>
